@@ -1,59 +1,167 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📝 Aplikasi CBT (Computer Based Test)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel Version](https://img.shields.io/badge/Laravel-v12.x-FF2D20?style=for-the-badge&logo=laravel)](https://laravel.com)
+[![PHP Version](https://img.shields.io/badge/PHP-v8.2+-777BB4?style=for-the-badge&logo=php)](https://php.net)
+[![MySQL](https://img.shields.io/badge/MySQL-v8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-v5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-## About Laravel
+Aplikasi Ujian Berbasis Komputer (**Computer Based Test - CBT**) berbasis web yang modern, responsif, dan aman. Membantu sekolah, institusi pendidikan, maupun lembaga pelatihan dalam menyelenggarakan ujian secara daring/luring dengan sistem penilaian otomatis, pengawasan ujian (proctoring anti-kecurangan), serta pencetakan e-sertifikat dan laporan hasil ujian.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- 👨‍💼 **Multi-Role & Akses Hak Pengguna**
+  - **Admin**: Manajemen pengguna (Siswa, Guru, Admin), kelas, mata pelajaran, dan konfigurasi sistem.
+  - **Guru**: Manajemen bank soal (pilihan ganda, kunci jawaban, bobot nilai), penjadwalan ujian, dan evaluasi hasil.
+  - **Siswa**: Mengikuti ujian interaktif, melihat riwayat nilai, dan mengunduh sertifikat kelulusan.
 
-## Learning Laravel
+- 📝 **Manajemen Ujian & Bank Soal**
+  - Pembuatan soal berbasis mata pelajaran & kelas.
+  - Opsi pengacakan urutan soal dan pilihan jawaban.
+  - Pengaturan durasi waktu (timer countdown real-time) dan jadwal mulai/selesai ujian.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- 👁️ **Sistem Pengawasan (Proctoring / Anti-Cheating)**
+  - Deteksi pergerakan fokus jendela/tab peramban saat ujian berlangsung.
+  - Catatan pelanggaran otomatis jika siswa mencoba membuka tab lain.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- 📊 **Penilaian & Laporan Hasil Instan**
+  - Penilaian otomatis secara real-time begitu siswa menyelesaikan ujian.
+  - Laporan hasil ujian siswa yang dapat diekspor dan dicetak.
 
-## Laravel Sponsors
+- 📜 **E-Sertifikat & Cetak Dokumen (PDF)**
+  - Generasi otomatis e-sertifikat kelulusan berbasis PDF (menggunakan DomPDF).
+  - Cetak Kartu Peserta Ujian dan Laporan Hasil Ujian secara langsung.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- 📧 **Verifikasi Email & Keamanan**
+  - Sistem verifikasi email otomatis untuk pendaftaran siswa baru menggunakan Laravel Breeze.
+  - Enkripsi kata sandi dan perlindungan CSRF / XSS bawaan Laravel.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🛠️ Teknologi yang Digunakan
 
-## Contributing
+- **Framework Backend:** [Laravel 12](https://laravel.com)
+- **Bahasa Pemrograman:** PHP >= 8.2
+- **Database:** MySQL / MariaDB
+- **Frontend & UI:** Blade Templates, Bootstrap 5, Tailwind CSS, Vite, JavaScript (ES6)
+- **Autentikasi & Otorisasi:** Laravel Breeze & `spatie/laravel-permission`
+- **Generasi PDF:** `barryvdh/laravel-dompdf`
+- **Ekspor Data:** `maatwebsite/excel`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## ⚙️ Prasyarat Sistem
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Sebelum menginstal proyek ini di mesin lokal atau server, pastikan environment Anda memenuhi prasyarat berikut:
 
-## Security Vulnerabilities
+- **PHP** >= 8.2 (dengan ekstensi `bcmath`, `ctype`, `fileinfo`, `gd`, `json`, `mbstring`, `openssl`, `pdo_mysql`, `xml`, `zip`)
+- **Composer** >= 2.x
+- **MySQL** >= 8.0 / MariaDB >= 10.4
+- **Node.js** >= 18.x & **NPM** >= 9.x
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🚀 Panduan Instalasi Lokal
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Ikuti langkah-langkah berikut untuk menginstal dan menjalankan aplikasi di komputer lokal Anda:
+
+### 1. Clone Repository & Masuk ke Folder Proyek
+```bash
+git clone https://github.com/firmanhdytt/Web5-cbt_app.git
+cd Web5-cbt_app/cbt-app
+```
+
+### 2. Salin Berkas `.env`
+```bash
+cp .env.example .env
+```
+
+### 3. Instal Dependensi PHP & JavaScript
+```bash
+composer install
+npm install
+```
+
+### 4. Generate Application Key
+```bash
+php artisan key:generate
+```
+
+### 5. Konfigurasi Database
+Buka berkas `.env` lalu sesuaikan kredensial koneksi database Anda:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=cbt_app
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 6. Jalankan Migrasi & Seeder Database
+Perintah ini akan membuat seluruh tabel, role hak akses, data contoh mata pelajaran, bank soal, dan akun uji coba:
+```bash
+php artisan migrate:fresh --seed
+```
+
+### 7. Tautkan Storage Link
+Penting agar e-sertifikat yang disimpan di storage lokal dapat diunduh oleh siswa:
+```bash
+php artisan storage:link
+```
+
+### 8. Jalankan Aplikasi
+Jalankan server PHP Laravel:
+```bash
+php artisan serve
+```
+Dan jalankan aset compiler Vite pada terminal terpisah:
+```bash
+npm run dev
+```
+
+Buka browser Anda dan akses: **`http://127.0.0.1:8000`**
+
+---
+
+## 🔑 Akun Uji Coba Default (Seeder)
+
+Anda dapat menggunakan akun-akun bawaan hasil seeder berikut untuk menguji sistem sesuai peran masing-masing:
+
+| Peran (Role) | Alamat Email | Password | Hak Akses |
+| :--- | :--- | :--- | :--- |
+| 🛡️ **Admin** | `admin@cbt.com` | `password` | Akses penuh manajemen pengguna, kelas, mapel, soal, ujian, dan laporan. |
+| 👨‍🏫 **Guru** | `guru@cbt.com` | `password` | Akses pembuatan bank soal, penjadwalan ujian, dan laporan hasil siswa. |
+| 👨‍🎓 **Siswa** | `siswa@cbt.com` | `password` | Mengikuti ujian aktif, melihat riwayat nilai, dan mengunduh e-sertifikat. |
+
+---
+
+## 📁 Struktur Direktori Utama Proyek
+
+```
+cbt-app/
+├── app/
+│   ├── Http/Controllers/     # Controller Aplikasi (Admin, Guru, Siswa, Ujian, Laporan)
+│   ├── Models/               # Model Eloquent (User, Mapel, Soal, Ujian, HasilUjian, dll)
+│   └── Providers/
+├── config/                   # Konfigurasi aplikasi, auth, permission, dll
+├── database/
+│   ├── migrations/           # Skema tabel database
+│   └── seeders/              # Data awal (Users, Roles, Permissions, Sample Data)
+├── public/                   # Asset publik & entry point index.php
+├── resources/
+│   ├── views/                # Template Blade (Admin, Guru, Siswa, PDF, Auth)
+│   ├── css/ & js/            # Asset Frontend
+├── routes/
+│   ├── web.php               # Rute Web (Dashboard, Ujian, Soal, Laporan)
+│   └── auth.php              # Rute Autentikasi (Breeze)
+└── storage/                  # Penyimpanan log, cache, dan file e-sertifikat PDF
+```
+
+---
+
+## 🤝 Kontribusi & Lisensi
+
+Proyek ini bersifat terbuka di bawah lisensi [MIT License](LICENSE).
