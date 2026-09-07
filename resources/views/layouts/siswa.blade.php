@@ -72,8 +72,8 @@
             <!-- User Profile Summary in Sidebar -->
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-custom-primary text-decoration-none dropdown-toggle sidebar-profile" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                    @if (Auth::user()->avatar)
-                        <img src="{{ Auth::user()->avatar }}" alt="avatar" width="32" height="32" class="rounded-circle me-2">
+                    @if (Auth::user()->avatar_url)
+                        <img src="{{ Auth::user()->avatar_url }}" alt="avatar" width="32" height="32" class="rounded-circle me-2 object-fit-cover">
                     @else
                         <div class="avatar-circle me-2" style="width:32px; height:32px; font-weight:700; background-color:var(--primary); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center;">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}

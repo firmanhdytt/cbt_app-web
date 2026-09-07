@@ -177,8 +177,14 @@
                 <tr>
                     <!-- Left: Foto Avatar -->
                     <td class="avatar-cell">
-                        <div class="avatar-box">
-                            FOTO 3 X 4
+                        <div class="avatar-box" style="line-height: normal; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            @if ($user->avatar && !str_starts_with($user->avatar, 'http') && file_exists(public_path('storage/' . $user->avatar)))
+                                <img src="{{ public_path('storage/' . $user->avatar) }}" style="width: 95px; height: 120px; object-fit: cover; border-radius: 6px;">
+                            @elseif ($user->avatar && str_starts_with($user->avatar, 'http'))
+                                <img src="{{ $user->avatar }}" style="width: 95px; height: 120px; object-fit: cover; border-radius: 6px;">
+                            @else
+                                <div style="line-height: 120px;">FOTO 3 X 4</div>
+                            @endif
                         </div>
                     </td>
 

@@ -98,4 +98,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Kelas::class);
     }
+
+    /**
+     * Get the full URL for the user's avatar photo.
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (!$this->avatar) {
+            return null;
+        }
+
+        if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+            return $this->avatar;
+        }
+
+        return \Illuminate\Support\Facades\Storage::url($this->avatar);
+    }
 }

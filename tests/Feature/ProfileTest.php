@@ -98,4 +98,37 @@ class ProfileTest extends TestCase
 
         $this->assertNotNull($user->fresh());
     }
+
+    public function test_user_can_upload_and_delete_avatar(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $user = User::factory()->create();
+
+        $file = \Illuminate\Http\UploadedFile::fake()->image('avatar.jpg');
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'avatar' => $file,
+            ]);
+
+        $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+
+        $user->refresh();
+        $this->assertNotNull($user->avatar);
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($user->avatar);
+
+        // Delete Avatar Test
+        $deleteResponse = $this
+            ->actingAs($user)
+            ->delete('/profile/avatar');
+
+        $deleteResponse->assertRedirect('/profile');
+        $user->refresh();
+        $this->assertNull($user->avatar);
+    }
 }
