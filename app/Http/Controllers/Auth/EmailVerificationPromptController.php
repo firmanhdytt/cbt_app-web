@@ -16,11 +16,11 @@ class EmailVerificationPromptController extends Controller
     {
         $user = $request->user();
         if ($user->role === 'admin') {
-            $dashboardRoute = route('admin.dashboard');
+            $dashboardRoute = route('admin.dashboard', absolute: false);
         } elseif ($user->role === 'guru') {
-            $dashboardRoute = route('guru.dashboard');
+            $dashboardRoute = route('guru.dashboard', absolute: false);
         } else {
-            $dashboardRoute = route('siswa.dashboard');
+            $dashboardRoute = route('siswa.dashboard', absolute: false);
         }
 
         return $user->hasVerifiedEmail()
