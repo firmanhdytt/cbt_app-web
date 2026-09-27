@@ -707,6 +707,7 @@
                 }
             });
         }
+        window.handleViolation = handleViolation;
 
         // Unlock Request Handler
         const btnSubmitUnlockRequest = document.getElementById('btnSubmitUnlockRequest');
