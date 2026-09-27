@@ -25,11 +25,11 @@ Route::get('sertifikat/verify/{nomor_sertifikat}', [LaporanController::class, 'v
 Route::get('/dashboard', function () {
     $role = auth()->user()->role;
     if ($role === 'admin') {
-        return redirect()->route('admin.dashboard', absolute: false);
+        return redirect(route('admin.dashboard', absolute: false));
     } elseif ($role === 'guru') {
-        return redirect()->route('guru.dashboard', absolute: false);
+        return redirect(route('guru.dashboard', absolute: false));
     } else {
-        return redirect()->route('siswa.dashboard', absolute: false);
+        return redirect(route('siswa.dashboard', absolute: false));
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
 // 4. ADMIN PANEL ROUTES (Role: admin)
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
-        return redirect()->route('admin.dashboard', absolute: false);
+        return redirect(route('admin.dashboard', absolute: false));
     });
     Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
     
@@ -81,7 +81,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 // 5. GURU PANEL ROUTES (Role: guru)
 Route::middleware(['auth', 'verified', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/', function () {
-        return redirect()->route('guru.dashboard', absolute: false);
+        return redirect(route('guru.dashboard', absolute: false));
     });
     Route::get('/dashboard', [DashboardController::class, 'guru'])->name('dashboard');
     
@@ -107,7 +107,7 @@ Route::middleware(['auth', 'verified', 'role:guru'])->prefix('guru')->name('guru
 // 6. SISWA PANEL ROUTES (Role: siswa)
 Route::middleware(['auth', 'verified', 'role:siswa'])->prefix('siswa')->name('siswa.')->group(function () {
     Route::get('/', function () {
-        return redirect()->route('siswa.dashboard', absolute: false);
+        return redirect(route('siswa.dashboard', absolute: false));
     });
     Route::get('/dashboard', [DashboardController::class, 'siswa'])->name('dashboard');
     
