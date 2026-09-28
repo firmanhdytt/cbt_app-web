@@ -161,8 +161,8 @@
             <table class="header-table">
                 <tr>
                     <td>
-                        <div class="header-title">KARTU PESERTA UJIAN ONLINE</div>
-                        <div class="header-subtitle">CBT Engine Portal - Tahun Ajaran {{ date('Y') }}/{{ date('Y')+1 }}</div>
+                        <div class="header-title">SMA NEGERI 5 MEDAN</div>
+                        <div class="header-subtitle">Kartu Peserta Ujian CBT - Tahun Ajaran {{ date('Y') }}/{{ date('Y')+1 }}</div>
                     </td>
                     <td class="header-tag">
                         OFFICIAL PASS

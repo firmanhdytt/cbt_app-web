@@ -1,71 +1,67 @@
-# 📝 Aplikasi CBT (Computer Based Test)
+# 🏫 CBT Portal - SMA Negeri 5 Medan
 
 [![Laravel Version](https://img.shields.io/badge/Laravel-v12.x-FF2D20?style=for-the-badge&logo=laravel)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-v8.2+-777BB4?style=for-the-badge&logo=php)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-v8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-v5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
+[![Flutter](https://img.shields.io/badge/Flutter-v3.x-02569B?style=for-the-badge&logo=flutter)](https://flutter.dev)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-Aplikasi Ujian Berbasis Komputer (**Computer Based Test - CBT**) berbasis web yang modern, responsif, dan aman. Membantu sekolah, institusi pendidikan, maupun lembaga pelatihan dalam menyelenggarakan ujian secara daring/luring dengan sistem penilaian otomatis, pengawasan ujian (proctoring anti-kecurangan), serta pencetakan e-sertifikat dan laporan hasil ujian.
+Aplikasi Portal Ujian Berbasis Komputer & Smartphone (**Computer Based Test - CBT**) resmi untuk **SMA Negeri 5 Medan**. Sistem ini mengintegrasikan portal web modern berbasis Laravel dengan aplikasi mobile pengunci **Exambro Kiosk App (Flutter)** untuk menyelenggarakan ujian sekolah yang aman, profesional, dan fully-responsive.
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Fitur-Fitur Unggulan
 
-- 👨‍💼 **Multi-Role & Akses Hak Pengguna**
-  - **Admin**: Manajemen pengguna (Siswa, Guru, Admin), kelas, mata pelajaran, dan konfigurasi sistem.
-  - **Guru**: Manajemen bank soal (pilihan ganda, kunci jawaban, bobot nilai), penjadwalan ujian, dan evaluasi hasil.
-  - **Siswa**: Mengikuti ujian interaktif, melihat riwayat nilai, dan mengunduh sertifikat kelulusan.
+- 🏛️ **Profil Identitas Resmi SMA Negeri 5 Medan**
+  - Branding sekolah lengkap (Logo SMAN 5 Medan, Favicon, Kop Surat PDF, dan Sertifikat Kelulusan).
+  - Tampilan Landing Page & Login yang responsif dan modern.
 
-- 📝 **Manajemen Ujian & Bank Soal**
-  - Pembuatan soal berbasis mata pelajaran & kelas.
-  - Opsi pengacakan urutan soal dan pilihan jawaban.
-  - Pengaturan durasi waktu (timer countdown real-time) dan jadwal mulai/selesai ujian.
+- 📱 **Integrasi Exambro Mobile App (Flutter)**
+  - Aplikasi Android Kiosk pengunci layar ujian khusus smartphone.
+  - Icon peluncur Android berlogo SMAN 5 Medan dengan label nama `CBT SMAN 5 Medan`.
 
-- 👁️ **Sistem Pengawasan (Proctoring / Anti-Cheating)**
-  - Deteksi pergerakan fokus jendela/tab peramban saat ujian berlangsung.
-  - Catatan pelanggaran otomatis jika siswa mencoba membuka tab lain.
+- 🛡️ **Sistem Pengawasan Proctoring Ketat (Anti-Kecurangan)**
+  - Deteksi otomatis pembatalan layar penuh (Fullscreen) dan perpindahan tab/jendela browser.
+  - Logika sanksi 2 kali peringatan (*2-strike violation policy*) dengan penguncian ujian otomatis dan fitur pengajuan permohonan buka kunci.
 
-- 📊 **Penilaian & Laporan Hasil Instan**
-  - Penilaian otomatis secara real-time begitu siswa menyelesaikan ujian.
-  - Laporan hasil ujian siswa yang dapat diekspor dan dicetak.
+- 👨‍💼 **Multi-Role & Akses Pengguna**
+  - **Admin**: Kelola pengguna (Siswa, Guru, Admin), kelas terstruktur, mata pelajaran, serta fitur **Import Pengguna via Excel/CSV**.
+  - **Guru**: Pengelolaan bank soal (pilihan ganda, opsi A-D, kunci jawaban), pembuatan jadwal ujian, dan evaluasi nilai.
+  - **Siswa**: Ruang ujian interaktif dengan navigasi peta soal, timer hitung mundur bulat, riwayat nilai, dan unduh e-sertifikat.
 
-- 📜 **E-Sertifikat & Cetak Dokumen (PDF)**
-  - Generasi otomatis e-sertifikat kelulusan berbasis PDF (menggunakan DomPDF).
-  - Cetak Kartu Peserta Ujian dan Laporan Hasil Ujian secara langsung.
+- 📊 **Struktur Detail Kelas & Import Excel Pengguna**
+  - Halaman detail kelas (`admin/kelas/show`) menampilkan daftar siswa terdaftar, statistik kelas, dan jadwal ujian khusus kelas.
+  - Fitur **Import Excel Data Pengguna** dilengkapi template unduhan Excel otomatis (`UserTemplateExport`).
 
-- 📧 **Verifikasi Email & Keamanan**
-  - Sistem verifikasi email otomatis untuk pendaftaran siswa baru menggunakan Laravel Breeze.
-  - Enkripsi kata sandi dan perlindungan CSRF / XSS bawaan Laravel.
+- 📜 **Penerbitan E-Sertifikat & QR Code Verification**
+  - Generasi otomatis PDF E-Sertifikat Kelulusan (*on-the-fly*) untuk siswa yang memenuhi KKM (>= 70).
+  - Dilengkapi QR Code unik untuk verifikasi keaslian dokumen secara publik.
 
 ---
 
 ## 🛠️ Teknologi yang Digunakan
 
-- **Framework Backend:** [Laravel 12](https://laravel.com)
-- **Bahasa Pemrograman:** PHP >= 8.2
+- **Backend Framework:** [Laravel 12](https://laravel.com)
+- **Bahasa Pemrograman:** PHP >= 8.2 & Dart/Flutter (Mobile)
 - **Database:** MySQL / MariaDB
-- **Frontend & UI:** Blade Templates, Bootstrap 5, Tailwind CSS, Vite, JavaScript (ES6)
-- **Autentikasi & Otorisasi:** Laravel Breeze & `spatie/laravel-permission`
-- **Generasi PDF:** `barryvdh/laravel-dompdf`
-- **Ekspor Data:** `maatwebsite/excel`
+- **Frontend & UI:** Blade Templates, Bootstrap 5, Tailwind CSS, JavaScript (ES6)
+- **Autentikasi & Hak Akses:** Laravel Breeze & `spatie/laravel-permission`
+- **PDF & QR Code Generator:** `barryvdh/laravel-dompdf` & `simplesoftwareio/simple-qrcode`
+- **Ekspor & Impor Excel:** `maatwebsite/excel`
 
 ---
 
 ## ⚙️ Prasyarat Sistem
 
-Sebelum menginstal proyek ini di mesin lokal atau server, pastikan environment Anda memenuhi prasyarat berikut:
-
-- **PHP** >= 8.2 (dengan ekstensi `bcmath`, `ctype`, `fileinfo`, `gd`, `json`, `mbstring`, `openssl`, `pdo_mysql`, `xml`, `zip`)
+- **PHP** >= 8.2 (dengan ekstensi `pdo_mysql`, `gd`, `zip`, `mbstring`, `openssl`, `fileinfo`)
 - **Composer** >= 2.x
 - **MySQL** >= 8.0 / MariaDB >= 10.4
 - **Node.js** >= 18.x & **NPM** >= 9.x
 
 ---
 
-## 🚀 Panduan Instalasi Lokal
-
-Ikuti langkah-langkah berikut untuk menginstal dan menjalankan aplikasi di komputer lokal Anda:
+## 🚀 Panduan Instalasi & Pengoperasian Lokal
 
 ### 1. Clone Repository & Masuk ke Folder Proyek
 ```bash
@@ -84,13 +80,14 @@ composer install
 npm install
 ```
 
-### 4. Generate Application Key
+### 4. Generate Application Key & Storage Link
 ```bash
 php artisan key:generate
+php artisan storage:link
 ```
 
-### 5. Konfigurasi Database
-Buka berkas `.env` lalu sesuaikan kredensial koneksi database Anda:
+### 5. Konfigurasi Database `.env`
+Sesuaikan kredensial database Anda pada berkas `.env`:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -101,67 +98,34 @@ DB_PASSWORD=
 ```
 
 ### 6. Jalankan Migrasi & Seeder Database
-Perintah ini akan membuat seluruh tabel, role hak akses, data contoh mata pelajaran, bank soal, dan akun uji coba:
 ```bash
 php artisan migrate:fresh --seed
 ```
 
-### 7. Tautkan Storage Link
-Penting agar e-sertifikat yang disimpan di storage lokal dapat diunduh oleh siswa:
+### 7. Jalankan Aplikasi
+Jalankan server PHP Laravel agar dapat diakses oleh perangkat HP dalam jaringan WiFi yang sama:
 ```bash
-php artisan storage:link
+php artisan serve --host=0.0.0.0 --port=8000
 ```
-
-### 8. Jalankan Aplikasi
-Jalankan server PHP Laravel:
-```bash
-php artisan serve
-```
-Dan jalankan aset compiler Vite pada terminal terpisah:
+Dan jalankan compiler Vite:
 ```bash
 npm run dev
 ```
 
-Buka browser Anda dan akses: **`http://127.0.0.1:8000`**
+Buka browser dan akses: **`http://localhost:8000`** atau via IP lokal laptop Anda (contoh: **`http://192.168.1.x:8000`**).
 
 ---
 
 ## 🔑 Akun Uji Coba Default (Seeder)
 
-Anda dapat menggunakan akun-akun bawaan hasil seeder berikut untuk menguji sistem sesuai peran masing-masing:
-
-| Peran (Role) | Alamat Email | Password | Hak Akses |
+| Peran (Role) | Email / Username | Password | Deskripsi Akses |
 | :--- | :--- | :--- | :--- |
-| 🛡️ **Admin** | `admin@cbt.com` | `password` | Akses penuh manajemen pengguna, kelas, mapel, soal, ujian, dan laporan. |
-| 👨‍🏫 **Guru** | `guru@cbt.com` | `password` | Akses pembuatan bank soal, penjadwalan ujian, dan laporan hasil siswa. |
-| 👨‍🎓 **Siswa** | `siswa@cbt.com` | `password` | Mengikuti ujian aktif, melihat riwayat nilai, dan mengunduh e-sertifikat. |
+| 🛡️ **Admin** | `admin@cbt.com` / `admin` | `password` | Akses penuh manajemen pengguna, kelas, mapel, soal, ujian, import excel, dan laporan. |
+| 👨‍🏫 **Guru** | `guru@cbt.com` / `guru` | `password` | Akses pembuatan bank soal, penjadwalan ujian, dan pengawasan hasil siswa. |
+| 👨‍🎓 **Siswa** | `siswa@cbt.com` / `siswa` | `password` | Mengikuti ujian aktif, melihat riwayat nilai, dan mengunduh e-sertifikat. |
 
 ---
 
-## 📁 Struktur Direktori Utama Proyek
+## 🤝 Lisensi
 
-```
-cbt-app/
-├── app/
-│   ├── Http/Controllers/     # Controller Aplikasi (Admin, Guru, Siswa, Ujian, Laporan)
-│   ├── Models/               # Model Eloquent (User, Mapel, Soal, Ujian, HasilUjian, dll)
-│   └── Providers/
-├── config/                   # Konfigurasi aplikasi, auth, permission, dll
-├── database/
-│   ├── migrations/           # Skema tabel database
-│   └── seeders/              # Data awal (Users, Roles, Permissions, Sample Data)
-├── public/                   # Asset publik & entry point index.php
-├── resources/
-│   ├── views/                # Template Blade (Admin, Guru, Siswa, PDF, Auth)
-│   ├── css/ & js/            # Asset Frontend
-├── routes/
-│   ├── web.php               # Rute Web (Dashboard, Ujian, Soal, Laporan)
-│   └── auth.php              # Rute Autentikasi (Breeze)
-└── storage/                  # Penyimpanan log, cache, dan file e-sertifikat PDF
-```
-
----
-
-## 🤝 Kontribusi & Lisensi
-
-Proyek ini bersifat terbuka di bawah lisensi [MIT License](LICENSE).
+Proyek ini dikembangkan secara resmi untuk SMA Negeri 5 Medan dan terlisensi di bawah [MIT License](LICENSE).

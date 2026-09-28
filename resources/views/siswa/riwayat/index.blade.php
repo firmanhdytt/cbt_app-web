@@ -73,16 +73,16 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 text-nowrap text-md-wrap">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-4" style="width:5%">No</th>
-                        <th style="width:18%">Mata Pelajaran</th>
-                        <th style="width:25%">Judul Ujian</th>
-                        <th style="width:15%">Waktu Selesai</th>
-                        <th style="width:12%" class="text-center">Analisis</th>
-                        <th style="width:12%" class="text-center">Nilai</th>
-                        <th style="width:13%" class="text-center pe-4">Sertifikat</th>
+                        <th class="ps-4">No</th>
+                        <th>Mata Pelajaran</th>
+                        <th>Judul Ujian</th>
+                        <th>Waktu Selesai</th>
+                        <th class="text-center">Analisis</th>
+                        <th class="text-center">Nilai</th>
+                        <th class="text-center pe-4">Sertifikat</th>
                     </tr>
                 </thead>
                 <tbody>

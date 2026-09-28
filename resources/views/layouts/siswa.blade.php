@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Siswa Dashboard') - CBT Portal</title>
+    <title>@yield('title', 'Siswa Dashboard') - CBT SMAN 5 Medan</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,10 +30,10 @@
     <!-- Sidebar Panel -->
     <aside class="sidebar-panel" id="sidebar">
         <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-custom">
-            <a href="#" class="d-flex align-items-center text-decoration-none">
-                <span class="fs-4 font-bold text-custom-primary">
-                    <i class="bi bi-mortarboard-fill me-2 text-primary"></i>
-                    <span class="sidebar-logo-text">CBT <span class="text-primary">Siswa</span></span>
+            <a href="#" class="d-flex align-items-center text-decoration-none gap-2">
+                <img src="/images/logo-sman5medan.png" alt="Logo SMAN 5 Medan" style="width: 28px; height: 28px; object-fit: contain;">
+                <span class="fs-5 font-bold text-custom-primary">
+                    <span class="sidebar-logo-text">SMAN 5 <span class="text-primary">Medan</span></span>
                 </span>
             </a>
             <button class="btn btn-sm d-none d-md-block text-custom-primary border-0" id="sidebarCollapseBtn" onclick="toggleSidebar()">

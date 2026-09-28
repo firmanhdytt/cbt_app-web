@@ -82,18 +82,18 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle mb-0 text-nowrap text-md-wrap">
                 <thead class="table-light">
                     <tr>
-                        <th style="width: 4%">No</th>
-                        <th style="width: 16%">Mata Pelajaran</th>
-                        <th style="width: 12%">Kelas Peserta</th>
-                        <th style="width: 18%">Judul Ujian</th>
-                        <th style="width: 9%">Durasi</th>
-                        <th style="width: 18%">Masa Ujian</th>
-                        <th style="width: 8%">Soal</th>
-                        <th style="width: 8%">Status</th>
-                        <th style="width: 7%" class="text-center">Aksi</th>
+                        <th>No</th>
+                        <th>Mata Pelajaran</th>
+                        <th>Kelas Peserta</th>
+                        <th>Judul Ujian</th>
+                        <th>Durasi</th>
+                        <th>Masa Ujian</th>
+                        <th class="text-center">Soal</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center pe-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,18 +136,18 @@
                                 </form>
                             </td>
                             <td>
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route(Auth::user()->role . '.ujian.show', $ujian->id) }}" class="btn btn-outline-info btn-sm" title="Detail">
-                                        <i class="bi bi-info-circle"></i>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="{{ route(Auth::user()->role . '.ujian.show', $ujian->id) }}" class="btn btn-outline-info btn-sm py-1 px-2 text-xs" title="Detail">
+                                        <i class="bi bi-eye me-1"></i>Detail
                                     </a>
-                                    <a href="{{ route(Auth::user()->role . '.ujian.edit', $ujian->id) }}" class="btn btn-outline-warning btn-sm" title="Edit">
-                                        <i class="bi bi-pencil"></i>
+                                    <a href="{{ route(Auth::user()->role . '.ujian.edit', $ujian->id) }}" class="btn btn-outline-warning btn-sm py-1 px-2 text-xs" title="Edit">
+                                        <i class="bi bi-pencil me-1"></i>Edit
                                     </a>
                                     <form action="{{ route(Auth::user()->role . '.ujian.destroy', $ujian->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus ujian ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm py-1 px-2 text-xs" title="Hapus">
+                                            <i class="bi bi-trash me-1"></i>Hapus
                                         </button>
                                     </form>
                                 </div>

@@ -21,6 +21,8 @@ class HasilUjian extends Model
         'status_pengerjaan',
         'perlu_buka_kunci',
         'alasan_buka_kunci',
+        'is_exambro',
+        'user_agent',
         'waktu_selesai',
     ];
 
@@ -28,6 +30,7 @@ class HasilUjian extends Model
         'waktu_selesai' => 'datetime',
         'nilai' => 'float',
         'perlu_buka_kunci' => 'boolean',
+        'is_exambro' => 'boolean',
     ];
 
     protected static function booted()

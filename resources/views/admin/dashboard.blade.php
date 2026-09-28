@@ -116,8 +116,8 @@
     <div class="col-lg-7 mb-4">
         <!-- Chart -->
         <div class="card-modern mb-4 shadow-sm border-0 bg-custom-card">
-            <h5 class="font-bold text-custom-primary mb-3">Grafik Statistik Aplikasi</h5>
-            <div style="height: 280px; position: relative;">
+            <h5 class="font-bold text-custom-primary mb-3">Grafik Aktivitas Ujian & Kelulusan</h5>
+            <div style="height: 230px; position: relative;">
                 <canvas id="adminChart"></canvas>
             </div>
         </div>

@@ -8,9 +8,17 @@
 @endsection
 
 @section('page-actions')
-    <a href="{{ route('admin.pengguna.create') }}" class="btn btn-primary btn-sm px-3 fw-semibold">
-        <i class="bi bi-plus-lg me-1"></i> Tambah Pengguna
-    </a>
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ route('admin.pengguna.template') }}" class="btn btn-outline-secondary btn-sm px-2.5 text-xs font-semibold" title="Unduh Template Excel">
+            <i class="bi bi-download me-1"></i> Template
+        </a>
+        <button type="button" class="btn btn-outline-success btn-sm px-3 text-xs font-semibold" data-bs-toggle="modal" data-bs-target="#modalImportExcel">
+            <i class="bi bi-file-earmark-excel me-1"></i> Import Excel
+        </button>
+        <a href="{{ route('admin.pengguna.create') }}" class="btn btn-primary btn-sm px-3 text-xs font-semibold">
+            <i class="bi bi-plus-lg me-1"></i> Tambah Pengguna
+        </a>
+    </div>
 @endsection
 
 @section('content')
@@ -91,17 +99,17 @@
 <div class="card card-custom border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 text-nowrap text-md-wrap">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-4" style="width: 5%">No</th>
-                        <th style="width: 25%">Pengguna</th>
-                        <th style="width: 23%">Kontak & Username</th>
-                        <th style="width: 12%">Peran</th>
+                        <th class="ps-4">No</th>
+                        <th>Pengguna</th>
+                        <th>Kontak & Username</th>
+                        <th>Peran</th>
                         @if(!$role || $role === 'siswa')
-                        <th style="width: 18%">NIS & Kelas</th>
+                        <th>NIS & Kelas</th>
                         @endif
-                        <th style="width: 17%" class="text-end pe-4">Aksi</th>
+                        <th class="text-end pe-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -199,5 +207,37 @@
         {{ $users->links('pagination::bootstrap-5') }}
     </div>
     @endif
+</div>
+
+<!-- Modal Import Excel Pengguna -->
+<div class="modal fade" id="modalImportExcel" tabindex="-1" aria-labelledby="modalImportExcelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-bottom py-3">
+                <h6 class="modal-title font-bold text-dark" id="modalImportExcelLabel">
+                    <i class="bi bi-file-earmark-excel text-success me-2"></i> Import Pengguna via Excel / CSV
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.pengguna.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="alert alert-info py-2 px-3 text-xs mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Unduh <a href="{{ route('admin.pengguna.template') }}" class="fw-bold text-primary">Template Excel Pengguna</a> untuk memastikan struktur kolom sesuai.
+                    </div>
+                    <div class="mb-3">
+                        <label for="excelFile" class="form-label text-xs font-semibold text-custom-secondary">Pilih File Excel / CSV (.xlsx, .xls, .csv)</label>
+                        <input type="file" class="form-control form-control-sm" id="excelFile" name="file" accept=".xlsx, .xls, .csv" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success btn-sm px-4 font-semibold">
+                        <i class="bi bi-upload me-1"></i> Upload & Import
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection

@@ -8,7 +8,7 @@
 @endsection
 
 @section('page-actions')
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
         <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#importModal">
             <i class="bi bi-file-earmark-excel me-1"></i> Import Excel
         </button>
@@ -66,16 +66,16 @@
 <div class="card card-custom">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 text-nowrap text-md-wrap">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-4" style="width:5%">No</th>
-                        <th style="width:15%">Mata Pelajaran</th>
-                        <th style="width:12%">Kelas</th>
-                        <th style="width:38%">Pertanyaan</th>
-                        <th style="width:10%">Kunci</th>
-                        <th style="width:10%">Pembuat</th>
-                        <th style="width:10%" class="text-center pe-4">Aksi</th>
+                        <th class="ps-4">No</th>
+                        <th>Mata Pelajaran</th>
+                        <th>Kelas</th>
+                        <th>Pertanyaan</th>
+                        <th>Kunci</th>
+                        <th>Pembuat</th>
+                        <th class="text-center pe-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,17 +106,17 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ route(Auth::user()->role . '.soal.show', $soal->id) }}" class="btn btn-outline-info btn-sm" title="Detail">
-                                        <i class="bi bi-info-circle"></i>
+                                    <a href="{{ route(Auth::user()->role . '.soal.show', $soal->id) }}" class="btn btn-outline-info btn-sm py-1 px-2 text-xs" title="Detail">
+                                        <i class="bi bi-eye me-1"></i>Detail
                                     </a>
-                                    <a href="{{ route(Auth::user()->role . '.soal.edit', $soal->id) }}" class="btn btn-outline-warning btn-sm" title="Edit">
-                                        <i class="bi bi-pencil"></i>
+                                    <a href="{{ route(Auth::user()->role . '.soal.edit', $soal->id) }}" class="btn btn-outline-warning btn-sm py-1 px-2 text-xs" title="Edit">
+                                        <i class="bi bi-pencil me-1"></i>Edit
                                     </a>
                                     <form action="{{ route(Auth::user()->role . '.soal.destroy', $soal->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus soal ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm py-1 px-2 text-xs" title="Hapus">
+                                            <i class="bi bi-trash me-1"></i>Hapus
                                         </button>
                                     </form>
                                 </div>

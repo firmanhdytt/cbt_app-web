@@ -73,7 +73,7 @@
         <!-- Chart -->
         <div class="card-modern mb-4 shadow-sm border-0 bg-custom-card">
             <h5 class="font-bold text-custom-primary mb-3">Statistik Distribusi Kelulusan</h5>
-            <div style="height: 280px; position: relative;">
+            <div style="height: 230px; position: relative;">
                 <canvas id="guruChart"></canvas>
             </div>
         </div>

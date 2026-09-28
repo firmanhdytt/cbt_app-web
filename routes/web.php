@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 
 // 1. PUBLIC ROUTES
 Route::get('/', function () {
+    if (str_contains(request()->header('User-Agent', ''), 'Exambro')) {
+        return redirect('/login');
+    }
     return view('welcome');
 });
 
@@ -49,6 +52,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
     
     // Kelola Pengguna (Siswa, Guru, Admin)
+    Route::get('/pengguna/template', [AdminPenggunaController::class, 'downloadTemplate'])->name('pengguna.template');
+    Route::post('/pengguna/import', [AdminPenggunaController::class, 'import'])->name('pengguna.import');
     Route::get('/pengguna/{user}/kartu', [LaporanController::class, 'pdfKartuPeserta'])->name('pengguna.kartu');
     Route::resource('pengguna', AdminPenggunaController::class);
 
@@ -95,9 +100,11 @@ Route::middleware(['auth', 'verified', 'role:guru'])->prefix('guru')->name('guru
     Route::resource('ujian', UjianController::class);
 
     // Laporan Hasil Ujian & Ekspor
+    Route::get('/pengguna/{user}/kartu', [LaporanController::class, 'pdfKartuPeserta'])->name('pengguna.kartu');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/siswa', [LaporanController::class, 'laporanSiswa'])->name('laporan.siswa');
     Route::get('/laporan/siswa/{siswa}', [LaporanController::class, 'detailSiswa'])->name('laporan.siswa.detail');
+    Route::get('/laporan/export/siswa', [LaporanController::class, 'exportSiswa'])->name('laporan.export.siswa');
     Route::get('/laporan/export/soal', [LaporanController::class, 'exportSoal'])->name('laporan.export.soal');
     Route::get('/laporan/export/hasil', [LaporanController::class, 'exportHasilUjian'])->name('laporan.export.hasil');
     Route::get('/laporan/pdf/hasil/{hasil}', [LaporanController::class, 'pdfHasilUjian'])->name('laporan.pdf.hasil');

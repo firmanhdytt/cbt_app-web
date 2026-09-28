@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - CBT Portal</title>
+    <title>Masuk - CBT SMAN 5 Medan</title>
+    <link rel="icon" type="image/png" href="/images/logo-sman5medan.png">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -197,28 +198,28 @@
 <div class="container-fluid p-0">
     <div class="row g-0 min-vh-100">
         
-        <!-- Left Banner Column (Clean Minimalist Banner) -->
+        <!-- Left Banner Column -->
         <div class="col-lg-5 col-xl-6 login-banner-left">
             <div>
                 <div class="brand-pill mb-4">
-                    <i class="bi bi-mortarboard-fill text-indigo-400 fs-5"></i>
-                    <span>CBT PORTAL</span>
+                    <img src="/images/logo-sman5medan.png" alt="Logo SMAN 5 Medan" width="28" height="28" class="object-contain">
+                    <span>SMA NEGERI 5 MEDAN</span>
                 </div>
             </div>
 
             <div class="my-auto py-4">
                 <h2 class="display-6 fw-bold text-white mb-3" style="line-height: 1.25;">
-                    Platform Ujian Online Terintergrasi & Terpercaya
+                    Portal Ujian CBT SMA Negeri 5 Medan
                 </h2>
                 <p class="text-white-50 text-base mb-4" style="max-width: 440px;">
-                    Solusi ujian digital modern untuk pelaksanaan evaluasi belajar yang transparan, aman, dan efisien.
+                    Sistem evaluasi dan ujian digital resmi SMAN 5 Medan untuk pelaksanaan ujian yang jujur, terintegrasi, dan transparan.
                 </p>
 
                 <!-- Simple Minimalist Feature Badges -->
                 <div class="d-flex flex-column gap-2.5" style="max-width: 380px;">
                     <div class="feature-badge-item">
                         <i class="bi bi-shield-check text-success fs-5"></i>
-                        <span class="text-xs fw-semibold text-white">Sistem Proteksi Fullscreen & Anti-Cheat</span>
+                        <span class="text-xs fw-semibold text-white">Exambro Mobile & Proctoring Security</span>
                     </div>
                     <div class="feature-badge-item">
                         <i class="bi bi-lightning-charge-fill text-warning fs-5"></i>
@@ -228,7 +229,7 @@
             </div>
 
             <div class="text-white-50 text-xs">
-                &copy; {{ date('Y') }} CBT Engine Portal. All rights reserved.
+                &copy; {{ date('Y') }} SMA Negeri 5 Medan. All rights reserved.
             </div>
         </div>
 
@@ -248,10 +249,8 @@
                 
                 <!-- Mobile Logo Header -->
                 <div class="d-lg-none text-center mb-4">
-                    <div class="d-inline-flex align-items-center gap-2 mb-2">
-                        <i class="bi bi-mortarboard-fill text-primary fs-3"></i>
-                        <span class="fs-4 fw-bold text-custom-primary">CBT Portal</span>
-                    </div>
+                    <img src="/images/logo-sman5medan.png" alt="Logo SMAN 5 Medan" width="64" height="64" class="mx-auto mb-2 object-contain">
+                    <div class="fs-5 fw-bold text-custom-primary">CBT SMAN 5 Medan</div>
                 </div>
 
                 <h3 class="fw-bold text-custom-primary mb-1">Selamat Datang Kembali</h3>

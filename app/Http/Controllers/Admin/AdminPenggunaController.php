@@ -182,11 +182,36 @@ class AdminPenggunaController extends Controller
      */
     public function destroy(User $pengguna)
     {
-        if ($pengguna->id === auth()->id()) {
-            return redirect()->route('admin.pengguna.index')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
-        }
-
         $pengguna->delete();
         return redirect()->route('admin.pengguna.index')->with('success', 'Pengguna berhasil dihapus.');
+    }
+
+    /**
+     * Import Data Pengguna dari File Excel/CSV.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ], [
+            'file.required' => 'Pilih file Excel/CSV terlebih dahulu.',
+            'file.mimes'    => 'Format file harus berupa Excel (.xlsx, .xls) atau CSV (.csv).',
+            'file.max'      => 'Ukuran file maksimal 5MB.',
+        ]);
+
+        try {
+            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\UserImport, $request->file('file'));
+            return redirect()->route('admin.pengguna.index')->with('success', 'Data pengguna berhasil diimpor dari Excel.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Unduh Template Excel Data Pengguna.
+     */
+    public function downloadTemplate()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\UserTemplateExport, 'template-import-pengguna.xlsx');
     }
 }

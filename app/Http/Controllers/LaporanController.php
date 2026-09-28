@@ -22,9 +22,6 @@ class LaporanController extends Controller
     /**
      * Tampilkan halaman pengelolaan laporan dan ekspor data (untuk Admin/Guru).
      */
-    /**
-     * Tampilkan halaman pengelolaan laporan dan ekspor data (untuk Admin/Guru).
-     */
     public function index(Request $request)
     {
         $kelass = \App\Models\Kelas::orderBy('nama_kelas')->get();
@@ -239,12 +236,34 @@ class LaporanController extends Controller
     public function downloadSertifikat(Ujian $ujian)
     {
         $userId = Auth::id();
+
+        // Cari record HasilUjian siswa untuk ujian ini
+        $hasil = HasilUjian::where('user_id', $userId)
+            ->where('ujian_id', $ujian->id)
+            ->first();
+
+        if (!$hasil || $hasil->nilai < 70) {
+            return redirect()->back()->with('error', 'Sertifikat tidak tersedia atau Anda belum memenuhi KKM kelulusan (>= 70).');
+        }
+
+        // Cari atau buat record Sertifikat
         $sertifikat = Sertifikat::where('user_id', $userId)
             ->where('ujian_id', $ujian->id)
-            ->firstOrFail();
+            ->first();
 
+        if (!$sertifikat) {
+            $sertifikat = $this->generateSertifikat($hasil);
+        }
+
+        // Jika file fisik PDF belum ada di storage, buat ulang secara otomatis
         if (!Storage::disk('public')->exists($sertifikat->file_path)) {
-            abort(404, 'File sertifikat tidak ditemukan di penyimpanan server.');
+            $hasil->load(['user.kelas', 'ujian.mapel']);
+            $certificateNumber = $sertifikat->nomor_sertifikat;
+            $verificationUrl = route('sertifikat.verify', $certificateNumber);
+            $qrCode = base64_encode(QrCode::format('svg')->size(90)->generate($verificationUrl));
+
+            $pdf = Pdf::loadView('pdf.sertifikat', compact('hasil', 'certificateNumber', 'verificationUrl', 'qrCode'));
+            Storage::disk('public')->put($sertifikat->file_path, $pdf->output());
         }
 
         return Storage::disk('public')->download($sertifikat->file_path, "Sertifikat-Kelulusan-{$ujian->judul}.pdf");

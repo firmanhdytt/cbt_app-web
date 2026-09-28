@@ -102,4 +102,14 @@ class KelasController extends Controller
         $kelas->delete();
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }
+
+    public function show(Kelas $kelas)
+    {
+        $kelas->loadCount('siswas', 'ujians');
+        
+        $siswas = $kelas->siswas()->orderBy('name')->paginate(15);
+        $ujians = $kelas->ujians()->with('mapel')->latest()->get();
+
+        return view('admin.kelas.show', compact('kelas', 'siswas', 'ujians'));
+    }
 }

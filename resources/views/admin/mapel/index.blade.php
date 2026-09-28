@@ -31,13 +31,13 @@
 <div class="card card-custom">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 text-nowrap text-md-wrap">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-4" style="width:8%">No</th>
-                        <th style="width:20%">Kode Mapel</th>
-                        <th style="width:52%">Nama Mata Pelajaran</th>
-                        <th style="width:20%" class="text-center pe-4">Aksi</th>
+                        <th class="ps-4">No</th>
+                        <th>Kode Mapel</th>
+                        <th>Nama Mata Pelajaran</th>
+                        <th class="text-center pe-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,14 +62,14 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ route('admin.mapel.edit', $mapel->id) }}" class="btn btn-outline-warning btn-sm" title="Edit">
+                                    <a href="{{ route('admin.mapel.edit', $mapel->id) }}" class="btn btn-outline-warning btn-sm py-1 px-2.5 text-xs" title="Edit">
                                         <i class="bi bi-pencil me-1"></i>Edit
                                     </a>
                                     <form action="{{ route('admin.mapel.destroy', $mapel->id) }}" method="POST"
                                         onsubmit="return confirm('Hapus mata pelajaran {{ addslashes($mapel->nama_mapel) }}? Soal yang terkait akan tetap ada.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm py-1 px-2.5 text-xs" title="Hapus">
                                             <i class="bi bi-trash me-1"></i>Hapus
                                         </button>
                                     </form>

@@ -11,7 +11,7 @@
         @method('patch')
 
         <!-- Avatar & Profile Header (Clean Modern Layout) -->
-        <div class="d-flex align-items-center gap-4 mb-4 pb-3 border-bottom border-custom">
+        <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-3 gap-sm-4 mb-4 pb-3 border-bottom border-custom text-center text-sm-start">
             <div class="position-relative flex-shrink-0">
                 @if ($user->avatar_url)
                     <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" width="84" height="84" class="rounded-circle object-fit-cover border border-custom shadow-sm">
@@ -26,7 +26,7 @@
                 <h5 class="fw-bold text-custom-primary mb-1">{{ $user->name }}</h5>
                 <p class="text-xs text-custom-secondary mb-2">{{ '@' . $user->username }} &bull; <span class="badge bg-primary bg-opacity-10 text-primary text-uppercase">{{ $user->role }}</span></p>
                 
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2">
                     <label for="avatar" class="btn btn-outline-primary btn-sm text-xs px-3 py-1 font-semibold mb-0" style="cursor:pointer;">
                         <i class="bi bi-camera me-1"></i>Pilih Foto Baru
                     </label>

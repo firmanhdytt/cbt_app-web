@@ -84,13 +84,13 @@ body {
     overflow: hidden; /* Prevent body scroll */
 }
 
-/* Typography Overrides */
-h1 { font-size: 32px; font-weight: 700; }
-h2 { font-size: 28px; font-weight: 700; }
-h3 { font-size: 24px; font-weight: 600; }
-h4 { font-size: 20px; font-weight: 600; }
-p, body, td, th { font-size: 16px; }
-small, .text-sm { font-size: 14px; }
+/* Typography Overrides (Fluid Scaling) */
+h1 { font-size: clamp(1.5rem, 2.5vw + 1rem, 2.25rem); font-weight: 700; }
+h2 { font-size: clamp(1.35rem, 2vw + 0.9rem, 1.85rem); font-weight: 700; }
+h3 { font-size: clamp(1.2rem, 1.5vw + 0.8rem, 1.5rem); font-weight: 600; }
+h4 { font-size: clamp(1.05rem, 1vw + 0.75rem, 1.25rem); font-weight: 600; }
+p, body, td, th { font-size: clamp(0.85rem, 0.4vw + 0.75rem, 0.95rem); }
+small, .text-sm { font-size: 0.8125rem; }
 
 /* Custom Reusable Classes */
 .bg-custom-body { background-color: var(--bg-body) !important; }
@@ -820,3 +820,52 @@ small, .text-sm { font-size: 14px; }
     }
 }
 
+/* ==========================================================================
+   Mobile & Responsive Enhancements (Full Responsive Utilities)
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    /* Mobile Table & Card Transformation */
+    .table-modern td, .table-modern th,
+    .table td, .table th {
+        padding: 0.5rem 0.6rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Modal Height Protection on Small Mobile Screens */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* Responsive Fullscreen Overlay Lock Dialogs */
+    .fullscreen-entry-overlay .card,
+    .fullscreen-warning-overlay .card {
+        max-height: 92vh;
+        overflow-y: auto;
+        padding: 1.25rem !important;
+    }
+    
+    .fullscreen-entry-overlay .display-5,
+    .fullscreen-warning-overlay .display-5 {
+        font-size: 2rem !important;
+    }
+
+    .fullscreen-entry-overlay .rounded-circle,
+    .fullscreen-warning-overlay .rounded-circle {
+        width: 56px !important;
+        height: 56px !important;
+    }
+
+    /* Card Padding on Mobile */
+    .card-modern, .card-custom {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .dashboard-welcome-card {
+        padding: 1.25rem !important;
+    }
+}

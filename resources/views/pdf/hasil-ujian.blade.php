@@ -93,8 +93,9 @@
 <body>
 
     <div class="header">
-        <h2>Rapor Hasil Ujian Mandiri</h2>
-        <p>Aplikasi Computer Based Test (CBT) Engine - Kelulusan Ujian Online</p>
+        <h2>SMA NEGERI 5 MEDAN</h2>
+        <h3 style="margin: 3px 0; font-size: 16px; font-weight: normal; color: #444;">Rapor Hasil Ujian Mandiri CBT</h3>
+        <p>Jl. Pelajar No. 21, Teladan Timur, Kec. Medan Kota, Kota Medan, Sumatera Utara</p>
     </div>
 
     <table class="info-table" border="1" bordercolor="#eee">

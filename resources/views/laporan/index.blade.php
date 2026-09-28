@@ -149,19 +149,20 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 text-nowrap text-md-wrap">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-4" style="width:5%">No</th>
-                        <th style="width:18%">Nama Siswa</th>
-                        <th style="width:12%">NIS / Kelas</th>
-                        <th style="width:22%">Ujian</th>
-                        <th style="width:10%">Waktu Selesai</th>
-                        <th style="width:10%" class="text-center">B / S</th>
-                        <th style="width:8%" class="text-center">Nilai</th>
-                        <th style="width:10%" class="text-center">Pelanggaran</th>
-                        <th style="width:7%" class="text-center">Status</th>
-                        <th style="width:11%" class="text-center pe-4">Aksi</th>
+                        <th class="ps-4">No</th>
+                        <th>Nama Siswa</th>
+                        <th>NIS / Kelas</th>
+                        <th>Ujian</th>
+                        <th>Mode Akses</th>
+                        <th>Waktu Selesai</th>
+                        <th class="text-center">B / S</th>
+                        <th class="text-center">Nilai</th>
+                        <th class="text-center">Pelanggaran</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center pe-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -184,6 +185,17 @@
                                 <div class="small fw-medium">{{ $hasil->ujian->judul ?? '-' }}</div>
                                 @if($hasil->ujian && $hasil->ujian->kelas)
                                     <div style="font-size:10px" class="text-muted">Kelas: {{ $hasil->ujian->kelas->nama_kelas }}</div>
+                                @endif
+                            </td>
+                            <td>
+                                @if($hasil->is_exambro)
+                                    <span class="badge bg-indigo text-white px-2 py-1" style="background-color:#4F46E5;" title="Dikerjakan menggunakan Aplikasi CBT Exambro Mobile resmi">
+                                        <i class="bi bi-phone-vibrate me-1"></i> Exambro Mobile
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" title="Dikerjakan menggunakan Web Browser Standard">
+                                        <i class="bi bi-laptop me-1"></i> Web Browser
+                                    </span>
                                 @endif
                             </td>
                             <td class="small text-muted">{{ $hasil->waktu_selesai ? $hasil->waktu_selesai->format('d M Y') : '-' }}<br><span style="font-size:10px">{{ $hasil->waktu_selesai ? $hasil->waktu_selesai->format('H:i') : '' }}</span></td>
@@ -243,7 +255,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center py-5 text-muted">
+                            <td colspan="11" class="text-center py-5 text-muted">
                                 <i class="bi bi-journal-x display-4 d-block mb-2 opacity-25"></i>
                                 Belum ada riwayat hasil ujian yang masuk.
                             </td>

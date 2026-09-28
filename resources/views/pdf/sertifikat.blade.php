@@ -201,6 +201,7 @@
 
             <!-- Header Titles -->
             <div class="cert-header">
+                <div style="font-size: 13px; font-weight: bold; letter-spacing: 2.5px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">SMA NEGERI 5 MEDAN</div>
                 <div class="cert-title">Sertifikat Kelulusan</div>
                 <div class="cert-subtitle">CERTIFICATE OF ACCOMPLISHMENT</div>
             </div>

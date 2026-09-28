@@ -91,6 +91,11 @@ class UjianSiswaController extends Controller
                 return redirect()->route('siswa.ujian.index')->with('error', $msg);
             }
             return redirect()->route('siswa.ujian.index')->with('error', 'Anda telah menyelesaikan ujian ini.');
+        } else {
+            // Reset violation session counter jika kunci ujian dibuka oleh Guru/Admin
+            if (!session()->has('ujian_started_at_' . $ujian->id)) {
+                session()->forget('ujian_violations_' . $ujian->id);
+            }
         }
 
         // Cek masa aktif ujian
@@ -135,6 +140,12 @@ class UjianSiswaController extends Controller
             'soal_id' => 'required|exists:soals,id',
             'jawaban' => 'nullable|in:A,B,C,D,a,b,c,d',
         ]);
+
+        // Keamanan Tambahan: Pastikan soal_id benar-benar milik Ujian ini
+        $belongsToUjian = $ujian->soals()->where('soals.id', $request->soal_id)->exists();
+        if (!$belongsToUjian) {
+            return response()->json(['status' => 'error', 'message' => 'Soal tidak valid untuk ujian ini.'], 422);
+        }
 
         $jawaban = $request->jawaban ? strtoupper(trim($request->jawaban)) : null;
 
@@ -186,6 +197,9 @@ class UjianSiswaController extends Controller
 
             $nilai = $totalQuestions > 0 ? round(($jumlahBenar / $totalQuestions) * 100, 2) : 0;
 
+            $userAgent = request()->header('User-Agent');
+            $isExambro = \Illuminate\Support\Str::contains($userAgent ?? '', ['CBT-Exambro', 'Exambro']);
+
             $hasil = HasilUjian::updateOrCreate(
                 [
                     'user_id'  => $userId,
@@ -197,6 +211,8 @@ class UjianSiswaController extends Controller
                     'jumlah_salah'       => $jumlahSalah,
                     'jumlah_pelanggaran' => $count,
                     'status_pengerjaan'  => 'terkunci',
+                    'is_exambro'         => $isExambro,
+                    'user_agent'         => substr($userAgent ?? '', 0, 250),
                     'waktu_selesai'      => now(),
                 ]
             );
@@ -303,6 +319,9 @@ class UjianSiswaController extends Controller
         $nilai = $totalQuestions > 0 ? ($jumlahBenar / $totalQuestions) * 100 : 0;
         $nilai = round($nilai, 2);
 
+        $userAgent = request()->header('User-Agent');
+        $isExambro = \Illuminate\Support\Str::contains($userAgent ?? '', ['CBT-Exambro', 'Exambro']);
+
         // Catat hasil ujian
         $hasil = HasilUjian::create([
             'user_id' => $userId,
@@ -310,6 +329,8 @@ class UjianSiswaController extends Controller
             'nilai' => $nilai,
             'jumlah_benar' => $jumlahBenar,
             'jumlah_salah' => $jumlahSalah,
+            'is_exambro' => $isExambro,
+            'user_agent' => substr($userAgent ?? '', 0, 250),
             'waktu_selesai' => now(),
         ]);
 

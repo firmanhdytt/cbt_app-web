@@ -302,21 +302,117 @@
         }
 
         @media (max-width: 991px) {
+            .cbt-header {
+                height: 54px;
+                padding: 0.4rem 0.75rem;
+                flex-wrap: nowrap;
+                background-color: #0f172a;
+                color: #ffffff;
+                border-bottom: 2px solid #4f46e5;
+            }
+            .cbt-header .fw-bold, .cbt-header .text-dark {
+                color: #ffffff !important;
+            }
+            .cbt-header .text-muted {
+                color: #94a3b8 !important;
+            }
             .cbt-app-container {
+                height: calc(100vh - 54px - 60px);
                 flex-direction: column;
-                overflow-y: auto;
-                height: auto;
+                overflow: hidden;
             }
             html, body {
-                overflow: auto;
+                overflow: hidden;
+                background-color: #f8fafc;
+            }
+            .cbt-main-content {
+                padding: 0.65rem 0.65rem 1rem 0.65rem;
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .cbt-card-question {
+                padding: 1rem 0.85rem;
+                border-radius: 12px;
+                border: 1px solid #e2e8f0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+                background-color: #ffffff;
+                min-height: auto;
             }
             .cbt-sidebar {
-                width: 100%;
-                border-left: none;
-                border-top: 2px solid var(--border-color, #e2e8f0);
+                display: none;
             }
-            .map-grid {
-                grid-template-columns: repeat(8, 1fr);
+            .question-text {
+                font-size: 0.98rem;
+                font-weight: 600;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+                color: #1e293b;
+            }
+            .option-item {
+                padding: 0.85rem;
+                margin-bottom: 0.65rem;
+                border-radius: 12px;
+                border: 2px solid #e2e8f0;
+                background-color: #ffffff;
+                touch-action: manipulation;
+                transition: all 0.15s ease;
+            }
+            .option-item.selected {
+                border-color: #4f46e5 !important;
+                background-color: rgba(79, 70, 229, 0.08) !important;
+                box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+            }
+            .option-badge {
+                width: 32px;
+                height: 32px;
+                font-size: 0.88rem;
+                margin-right: 0.75rem;
+                border-radius: 8px;
+                background-color: #f1f5f9;
+                color: #475569;
+            }
+            .option-text {
+                font-size: 0.92rem;
+                padding-top: 3px;
+                color: #1e293b;
+            }
+            .cbt-question-footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                background-color: #ffffff;
+                border-top: 1.5px solid #e2e8f0;
+                padding: 0.5rem 0.75rem;
+                margin: 0;
+                z-index: 1010;
+                box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.4rem;
+            }
+            .cbt-question-footer .btn {
+                flex: 1;
+                padding: 0.5rem 0.35rem !important;
+                font-size: 0.78rem !important;
+                font-weight: 700 !important;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 42px;
+                border-radius: 8px;
+            }
+            .timer-badge {
+                font-size: 0.88rem;
+                padding: 0.25rem 0.6rem;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #ffffff;
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
         }
     </style>
@@ -406,16 +502,14 @@
 
     <!-- Header Ujian (Fixed Top) -->
     <header class="cbt-header shadow-sm">
-        <div class="d-flex align-items-center gap-3">
-            <span class="badge bg-primary px-2.5 py-1.5 font-monospace fs-6">CBT PORTAL</span>
-            <div>
-                <div class="fw-bold text-dark text-truncate" style="max-width:320px;" title="{{ $ujian->judul }}">
-                    {{ $ujian->judul }}
-                </div>
-                <div class="text-muted" style="font-size:11px;">
-                    Siswa: <strong>{{ Auth::user()->name }}</strong> (NIS: {{ Auth::user()->nis ?? '-' }})
-                </div>
-            </div>
+        <div class="d-flex align-items-center gap-2 overflow-hidden">
+            <span class="fw-bold text-truncate text-dark" style="max-width:280px;" title="{{ $ujian->judul }}">
+                <i class="bi bi-file-earmark-text text-primary me-1"></i>{{ $ujian->judul }}
+            </span>
+            <span class="text-muted d-none d-sm-inline">&bull;</span>
+            <span class="text-muted small text-truncate d-none d-sm-inline" style="max-width:180px;">
+                <i class="bi bi-person-fill me-1"></i>{{ Auth::user()->name }}
+            </span>
         </div>
 
         <div class="d-flex align-items-center gap-3">
@@ -433,7 +527,7 @@
 
             <!-- Status Fullscreen Lock Badge -->
             <span class="badge bg-success bg-opacity-10 text-success border border-success d-none d-md-inline-flex align-items-center gap-1 py-1.5 px-2.5">
-                <i class="bi bi-fullscreen text-success"></i> Fullscreen Wajib Active
+                <i class="bi bi-fullscreen text-success"></i> Fullscreen Active
             </span>
 
             <!-- Timer -->
@@ -454,13 +548,16 @@
                 <!-- Question Header -->
                 <div class="cbt-question-header">
                     <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-secondary px-3 py-2 fs-6 fw-bold">SOAL NO. <span id="displaySoalNumber">1</span></span>
+                        <span class="badge bg-primary px-3 py-2 fs-6 fw-bold">SOAL NO. <span id="displaySoalNumber">1</span></span>
                         <span class="text-muted small">dari {{ $soals->count() }} Soal</span>
                     </div>
 
-                    <button type="button" class="btn btn-outline-warning btn-sm fw-semibold px-3" id="btnRagu">
-                        <i class="bi bi-flag-fill me-1"></i> Ragu-Ragu (R)
-                    </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Button Peta Nomor Soal -->
+                        <button type="button" class="btn btn-sm btn-outline-primary font-semibold py-1.5 px-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavSoal">
+                            <i class="bi bi-grid-3x3-gap-fill me-1"></i> Peta Soal
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Questions List -->
@@ -489,20 +586,20 @@
 
                 <!-- Bottom Navigation Buttons -->
                 <div class="cbt-question-footer">
-                    <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" id="btnPrev" onclick="navigatePrev()">
-                        <i class="bi bi-arrow-left me-1"></i> (←) Sebelumnya
+                    <button type="button" class="btn btn-outline-secondary px-3.5 py-2 fw-semibold" id="btnPrev" onclick="navigatePrev()">
+                        <i class="bi bi-arrow-left me-1"></i> Sebelumnya
                     </button>
 
-                    <button type="button" class="btn btn-outline-danger btn-sm px-3" id="btnClear" onclick="clearAnswer()">
-                        <i class="bi bi-eraser me-1"></i> Hapus Jawaban
+                    <button type="button" class="btn btn-outline-warning btn-sm fw-semibold px-3 py-2" id="btnRagu">
+                        <i class="bi bi-flag-fill me-1"></i> Ragu-Ragu
                     </button>
 
-                    <button type="button" class="btn btn-primary px-4 fw-semibold" id="btnNext" onclick="navigateNext()">
-                        Berikutnya (→) <i class="bi bi-arrow-right ms-1"></i>
+                    <button type="button" class="btn btn-primary px-4 py-2 fw-semibold" id="btnNext" onclick="navigateNext()">
+                        Selanjutnya <i class="bi bi-arrow-right ms-1"></i>
                     </button>
 
-                    <button type="button" class="btn btn-success px-4 fw-bold d-none" id="btnFinish" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
-                        <i class="bi bi-check-circle me-1"></i> Selesai & Kirim Ujian
+                    <button type="button" class="btn btn-success px-4 py-2 fw-bold d-none" id="btnFinish" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
+                        <i class="bi bi-check-circle-fill me-1"></i> Kumpulkan Ujian
                     </button>
                 </div>
 
@@ -551,6 +648,44 @@
             </div>
         </aside>
 
+    </div>
+
+    <!-- Offcanvas Navigation Grid for Mobile -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavSoal" aria-labelledby="offcanvasNavSoalLabel">
+        <div class="offcanvas-header border-bottom py-3">
+            <h6 class="offcanvas-title font-bold text-dark" id="offcanvasNavSoalLabel">
+                <i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i> Peta Nomor Soal
+            </h6>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="map-grid" id="mapContainerMobile">
+                @foreach ($soals as $index => $soal)
+                    @php
+                        $answered = isset($jawabanPesertas[$soal->id]);
+                        $class = $answered ? 'answered' : '';
+                    @endphp
+                    <button type="button" class="map-soal-btn {{ $class }}" id="mapBtnMobile_{{ $index }}" onclick="showQuestion({{ $index }})" data-bs-dismiss="offcanvas">
+                        {{ $index + 1 }}
+                    </button>
+                @endforeach
+            </div>
+
+            <div class="border-top pt-3 mt-4 text-xs text-muted">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="d-inline-block bg-success rounded-circle me-2" style="width:12px; height:12px;"></span>
+                    <span>Sudah Dijawab</span>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                    <span class="d-inline-block bg-warning rounded-circle me-2" style="width:12px; height:12px;"></span>
+                    <span>Ragu-Ragu</span>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <span class="d-inline-block bg-light border border-secondary rounded-circle me-2" style="width:12px; height:12px;"></span>
+                    <span>Belum Dijawab</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Review Confirmation Modal -->
@@ -640,6 +775,8 @@
         const violationBadge = document.getElementById('violationCountBadge');
         const violationReasonText = document.getElementById('violationReasonText');
 
+        let isHandlingViolation = false;
+
         // Start Mandatory Fullscreen
         btnEnterMandatoryFullscreen.addEventListener('click', () => {
             requestNativeFullscreen();
@@ -651,6 +788,9 @@
         btnReenterFullscreen.addEventListener('click', () => {
             requestNativeFullscreen();
             warningOverlay.classList.add('d-none');
+            setTimeout(() => {
+                isHandlingViolation = false;
+            }, 1200);
         });
 
         function requestNativeFullscreen() {
@@ -667,6 +807,14 @@
         function handleViolation(reason) {
             if (!isExamStarted) return; // Only trigger after entry screen dismissed
 
+            const permanentLock = document.getElementById('permanentLockOverlay');
+            if (isHandlingViolation || 
+                (warningOverlay && !warningOverlay.classList.contains('d-none')) || 
+                (permanentLock && !permanentLock.classList.contains('d-none'))) {
+                return;
+            }
+
+            isHandlingViolation = true;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             fetch("{{ route('siswa.ujian.catat-pelanggaran', $ujian->id) }}", {
@@ -686,7 +834,6 @@
                 if (data.status === 'locked' || count >= 2) {
                     isExamStarted = false; // Stop further proctoring triggers
                     warningOverlay.classList.add('d-none');
-                    const permanentLock = document.getElementById('permanentLockOverlay');
                     if (permanentLock) permanentLock.classList.remove('d-none');
                     showToastAlert("UJIAN TERKUNCI PERMANEN! Terdeteksi 2 kali pelanggaran.", "danger");
                 } else {
@@ -701,10 +848,17 @@
                 if (violationCount >= 2) {
                     isExamStarted = false;
                     warningOverlay.classList.add('d-none');
-                    document.getElementById('permanentLockOverlay').classList.remove('d-none');
+                    if (permanentLock) permanentLock.classList.remove('d-none');
                 } else {
                     warningOverlay.classList.remove('d-none');
                 }
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    if (warningOverlay && warningOverlay.classList.contains('d-none')) {
+                        isHandlingViolation = false;
+                    }
+                }, 1000);
             });
         }
         window.handleViolation = handleViolation;
