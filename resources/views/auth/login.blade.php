@@ -202,6 +202,23 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
 
+        /* APK Guide Details & Accordion */
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+        details summary {
+            list-style: none;
+        }
+        details[open] .guide-chevron {
+            transform: rotate(180deg);
+        }
+        .guide-chevron {
+            transition: transform 0.2s ease;
+        }
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
         .divider-clean {
             display: flex;
             align-items: center;
@@ -418,26 +435,25 @@
             </a>
         </div>
 
-        <!-- Panduan Singkat -->
-        <div class="mt-2 pt-2 border-top border-success-subtle d-flex align-items-center justify-content-between" style="font-size: 0.72rem;">
-            <span class="text-custom-secondary">
-                <i class="bi bi-shield-lock-fill text-success me-1"></i> Mode Kiosk Aman & Anti-Curang
-            </span>
-            <a class="text-decoration-none text-success fw-semibold" data-bs-toggle="collapse" href="#apkGuideCollapse" role="button" aria-expanded="false" aria-controls="apkGuideCollapse">
-                Panduan Pasang <i class="bi bi-chevron-down ms-0.5"></i>
-            </a>
-        </div>
-
-        <div class="collapse mt-2" id="apkGuideCollapse">
-            <div class="p-2.5 rounded-3 bg-body border small text-custom-secondary" style="font-size: 0.72rem; line-height: 1.5;">
+        <!-- Panduan Singkat Pemasangan APK -->
+        <details class="mt-2.5 pt-2 border-top border-success-subtle apk-guide-details">
+            <summary class="d-flex align-items-center justify-content-between text-success fw-semibold cursor-pointer user-select-none" style="font-size: 0.74rem;">
+                <span class="text-custom-secondary">
+                    <i class="bi bi-shield-lock-fill text-success me-1"></i> Mode Kiosk Aman & Anti-Curang
+                </span>
+                <span class="d-inline-flex align-items-center gap-1">
+                    Panduan Pasang <i class="bi bi-chevron-down guide-chevron"></i>
+                </span>
+            </summary>
+            <div class="mt-2 p-2.5 rounded-3 bg-body border text-custom-secondary" style="font-size: 0.74rem; line-height: 1.55;">
                 <ol class="mb-0 ps-3">
-                    <li>Klik tombol <b>Unduh APK</b> dan pasang berkas di HP Android.</li>
-                    <li>Izinkan <i>"Install Unknown Apps"</i> pada pengaturan HP bila diminta.</li>
-                    <li>Buka aplikasi CBT Exambro, layar akan otomatis terkunci selama ujian.</li>
-                    <li>Login dengan akun peserta ujian yang telah terdaftar.</li>
+                    <li>Klik tombol <b>Unduh APK</b> dan pasang (install) di smartphone Android.</li>
+                    <li>Izinkan <i>"Install Unknown Apps" / Sumber Tidak Dikenal</i> pada pengaturan bila diminta.</li>
+                    <li>Buka aplikasi <b>CBT Exambro</b>, layar otomatis terkunci selama ujian.</li>
+                    <li>Masukkan email / username dan kata sandi peserta untuk mulai ujian.</li>
                 </ol>
             </div>
-        </div>
+        </details>
     </div>
 
     <!-- Footer Copyright -->
@@ -489,5 +505,8 @@
         syncThemeIcons(savedTheme);
     });
 </script>
+
+<!-- Bootstrap 5 Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
