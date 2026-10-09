@@ -10,8 +10,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CBT Design System CSS -->
     <link href="/css/design-system.css" rel="stylesheet">
@@ -26,86 +28,90 @@
 
     <style>
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Left Banner Column */
-        .login-banner-left {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 3.5rem 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-banner-left::before {
-            content: '';
-            position: absolute;
-            width: 380px;
-            height: 380px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0) 70%);
-            top: -100px;
-            left: -100px;
-            pointer-events: none;
-        }
-
-        .brand-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #ffffff;
-            backdrop-filter: blur(8px);
-        }
-
-        .feature-badge-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 18px;
-            border-radius: 12px;
-            backdrop-filter: blur(6px);
-        }
-
-        /* Right Form Column */
-        .login-form-right {
-            background-color: var(--bg-card);
+            background-color: var(--bg-body, #f8fafc);
+            color: var(--text-primary, #1e293b);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 3.5rem 4rem;
+            align-items: center;
             position: relative;
-            transition: background-color var(--transition-speed) ease;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
+        }
+
+        /* Subtle ambient glow in background */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.07) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        [data-theme="dark"] .ambient-bg {
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.12) 0%, transparent 45%);
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-card {
+            background-color: var(--bg-card, #ffffff);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
+            padding: 2.25rem 2.25rem;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 576px) {
+            .auth-card {
+                padding: 1.75rem 1.25rem;
+                border-radius: 16px;
+            }
+        }
+
+        .school-logo-badge {
+            width: 68px;
+            height: 68px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(99, 102, 241, 0.03) 100%);
+            border: 1px solid rgba(79, 70, 229, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.1);
         }
 
         .form-control-clean {
-            background-color: var(--bg-body);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
+            background-color: var(--bg-body, #f8fafc);
+            border: 1.5px solid var(--border-color, #cbd5e1);
+            color: var(--text-primary, #0f172a);
             font-size: 0.925rem;
             padding: 0.75rem 1rem;
-            border-radius: 10px;
+            border-radius: 12px;
             transition: all 0.2s ease;
         }
 
         .form-control-clean:focus {
-            background-color: var(--bg-card);
+            background-color: var(--bg-card, #ffffff);
             border-color: #4f46e5;
-            box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.12);
-            color: var(--text-primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+            color: var(--text-primary, #0f172a);
         }
 
         .input-pwd-wrapper {
@@ -119,10 +125,15 @@
             transform: translateY(-50%);
             border: none;
             background: transparent;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+            color: var(--text-secondary, #64748b);
+            font-size: 1.15rem;
             cursor: pointer;
             padding: 2px 6px;
+            transition: color 0.15s ease;
+        }
+
+        .pwd-toggle-btn:hover {
+            color: #4f46e5;
         }
 
         .btn-submit-clean {
@@ -130,26 +141,64 @@
             color: #ffffff;
             border: none;
             font-weight: 600;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
             font-size: 0.95rem;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.28);
         }
 
         .btn-submit-clean:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.38);
             color: #ffffff;
+        }
+
+        /* APK Download Card Banner */
+        .apk-download-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.04) 100%);
+            border: 1px dashed rgba(16, 185, 129, 0.4);
+            border-radius: 14px;
+            padding: 1rem 1.15rem;
+            transition: all 0.2s ease;
+        }
+
+        .apk-download-box:hover {
+            border-color: rgba(16, 185, 129, 0.8);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.07) 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-download-apk {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #ffffff;
+            border: none;
+            font-weight: 600;
+            font-size: 0.825rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-download-apk:hover {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
 
         .divider-clean {
             display: flex;
             align-items: center;
             text-align: center;
-            color: var(--text-secondary);
+            color: var(--text-secondary, #64748b);
             font-size: 0.75rem;
-            margin: 1.5rem 0 1rem 0;
+            margin: 1.25rem 0;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -158,7 +207,7 @@
         .divider-clean::after {
             content: '';
             flex: 1;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color, #e2e8f0);
         }
 
         .divider-clean span {
@@ -166,173 +215,226 @@
         }
 
         .btn-google-clean {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            font-size: 0.9rem;
+            background-color: var(--bg-card, #ffffff);
+            border: 1px solid var(--border-color, #cbd5e1);
+            color: var(--text-primary, #0f172a);
+            font-size: 0.875rem;
             font-weight: 500;
-            padding: 0.65rem 1rem;
-            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
             transition: all 0.2s ease;
         }
 
         .btn-google-clean:hover {
-            background-color: var(--bg-body);
-            border-color: #cbd5e1;
-            color: var(--text-primary);
+            background-color: var(--bg-body, #f8fafc);
+            border-color: #94a3b8;
+            color: var(--text-primary, #0f172a);
         }
 
-        @media (max-width: 991px) {
-            .login-banner-left {
-                display: none;
-            }
-            .login-form-right {
-                padding: 2.5rem 1.5rem;
-                min-height: 100vh;
-            }
+        .top-action-bar {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .btn-icon-soft {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background-color: var(--bg-card, #ffffff);
+            border: 1px solid var(--border-color, #e2e8f0);
+            color: var(--text-secondary, #64748b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon-soft:hover {
+            color: #4f46e5;
+            border-color: #c7d2fe;
+            background-color: var(--bg-body, #f8fafc);
         }
     </style>
 </head>
-<body class="bg-custom-body">
+<body>
 
-<div class="container-fluid p-0">
-    <div class="row g-0 min-vh-100">
-        
-        <!-- Left Banner Column -->
-        <div class="col-lg-5 col-xl-6 login-banner-left">
-            <div>
-                <div class="brand-pill mb-4">
-                    <img src="/images/logo-sman5medan.png" alt="Logo SMAN 5 Medan" width="28" height="28" class="object-contain">
-                    <span>SMA NEGERI 5 MEDAN</span>
-                </div>
-            </div>
+<div class="ambient-bg"></div>
 
-            <div class="my-auto py-4">
-                <h2 class="display-6 fw-bold text-white mb-3" style="line-height: 1.25;">
-                    Portal Ujian CBT SMA Negeri 5 Medan
-                </h2>
-                <p class="text-white-50 text-base mb-4" style="max-width: 440px;">
-                    Sistem evaluasi dan ujian digital resmi SMAN 5 Medan untuk pelaksanaan ujian yang jujur, terintegrasi, dan transparan.
-                </p>
+<!-- Top Navigation & Controls -->
+<div class="top-action-bar">
+    <a href="/" class="btn-icon-soft text-decoration-none" title="Kembali ke Beranda">
+        <i class="bi bi-house-door-fill fs-6"></i>
+    </a>
+    <button class="btn-icon-soft border-0" onclick="toggleTheme()" title="Ganti Mode Gelap/Terang">
+        <i class="bi bi-sun-fill fs-6 d-none" id="themeSunIcon"></i>
+        <i class="bi bi-moon-fill fs-6 d-none" id="themeMoonIcon"></i>
+    </button>
+</div>
 
-                <!-- Simple Minimalist Feature Badges -->
-                <div class="d-flex flex-column gap-2.5" style="max-width: 380px;">
-                    <div class="feature-badge-item">
-                        <i class="bi bi-shield-check text-success fs-5"></i>
-                        <span class="text-xs fw-semibold text-white">Exambro Mobile & Proctoring Security</span>
-                    </div>
-                    <div class="feature-badge-item">
-                        <i class="bi bi-lightning-charge-fill text-warning fs-5"></i>
-                        <span class="text-xs fw-semibold text-white">Simpan Jawaban Real-Time Otomatis</span>
-                    </div>
-                </div>
-            </div>
+<!-- Main Centered Container -->
+<div class="login-wrapper">
 
-            <div class="text-white-50 text-xs">
-                &copy; {{ date('Y') }} SMA Negeri 5 Medan. All rights reserved.
-            </div>
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <div class="school-logo-badge">
+            <img src="/images/logo-sman5medan.png" alt="Logo SMAN 5 Medan" width="46" height="46" class="object-contain">
+        </div>
+        <h4 class="fw-bold mb-1" style="letter-spacing: -0.02em;">CBT SMA NEGERI 5 MEDAN</h4>
+        <p class="text-custom-secondary small mb-0">Portal Ujian Komputer & Evaluasi Akademik Online</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth-card">
+
+        <!-- Card Title -->
+        <div class="mb-4 text-center">
+            <h5 class="fw-bold mb-1">Masuk ke Akun Anda</h5>
+            <p class="text-custom-secondary small mb-0">Silakan masukkan akun siswa, guru, atau admin</p>
         </div>
 
-        <!-- Right Form Column -->
-        <div class="col-lg-7 col-xl-6 login-form-right">
-            
-            <!-- Theme Toggler (Top Right) -->
-            <div class="position-absolute top-0 end-0 p-3 p-md-4">
-                <button class="btn text-custom-primary border-0 p-2" onclick="toggleTheme()" title="Ganti Tema">
-                    <i class="bi bi-sun-fill fs-5 d-none" id="themeSunIcon"></i>
-                    <i class="bi bi-moon-fill fs-5 d-none" id="themeMoonIcon"></i>
-                </button>
+        <!-- Session Status Alert -->
+        @if (session('status'))
+            <div class="alert alert-success d-flex align-items-center gap-2 p-2.5 mb-3 text-xs border-0 shadow-sm rounded-3" role="alert">
+                <i class="bi bi-check-circle-fill text-success fs-6"></i>
+                <div>{{ session('status') }}</div>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger d-flex align-items-start gap-2 p-2.5 mb-3 text-xs border-0 shadow-sm rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill text-danger fs-6 mt-0.5"></i>
+                <div class="small">
+                    {{ $errors->first() }}
+                </div>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
+            <!-- Email or Username Input -->
+            <div class="mb-3">
+                <label for="email" class="form-label text-custom-secondary small fw-semibold mb-1">
+                    <i class="bi bi-person me-1"></i> Email atau Username
+                </label>
+                <input type="text" class="form-control form-control-clean @error('email') is-invalid @enderror" 
+                       id="email" name="email" value="{{ old('email') }}" required autofocus 
+                       placeholder="Contoh: 123456 atau nama@sekolah.id">
             </div>
 
-            <!-- Form Container -->
-            <div class="mx-auto w-100" style="max-width: 400px;">
-                
-                <!-- Mobile Logo Header -->
-                <div class="d-lg-none text-center mb-4">
-                    <img src="/images/logo-sman5medan.png" alt="Logo SMAN 5 Medan" width="64" height="64" class="mx-auto mb-2 object-contain">
-                    <div class="fs-5 fw-bold text-custom-primary">CBT SMAN 5 Medan</div>
+            <!-- Password Input -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="password" class="form-label text-custom-secondary small fw-semibold mb-0">
+                        <i class="bi bi-shield-lock me-1"></i> Kata Sandi
+                    </label>
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" class="text-xs text-primary text-decoration-none fw-semibold">Lupa Password?</a>
+                    @endif
                 </div>
-
-                <h3 class="fw-bold text-custom-primary mb-1">Selamat Datang Kembali</h3>
-                <p class="text-custom-secondary text-sm mb-4">Silakan masuk menggunakan email atau username Anda.</p>
-
-                <!-- Session Status Alert -->
-                @if (session('status'))
-                    <div class="alert alert-success p-2.5 mb-3 text-xs border-0 shadow-sm" role="alert">
-                        {{ session('status') }}
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-
-                    <!-- Email or Username Input -->
-                    <div class="mb-3">
-                        <label for="email" class="form-label text-custom-secondary small font-medium mb-1">Email atau Username</label>
-                        <input type="text" class="form-control form-control-clean @error('email') is-invalid @enderror" 
-                               id="email" name="email" value="{{ old('email') }}" required autofocus 
-                               placeholder="Masukkan email atau username">
-                        @error('email')
-                            <div class="invalid-feedback text-xs mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Password Input -->
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label for="password" class="form-label text-custom-secondary small font-medium mb-0">Kata Sandi</label>
-                            @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="text-xs text-primary text-decoration-none fw-medium">Lupa Password?</a>
-                            @endif
-                        </div>
-                        <div class="input-pwd-wrapper">
-                            <input type="password" class="form-control form-control-clean @error('password') is-invalid @enderror" 
-                                   id="password" name="password" required placeholder="Masukkan kata sandi">
-                            <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility()" title="Lihat Password">
-                                <i class="bi bi-eye" id="pwdEyeIcon"></i>
-                            </button>
-                        </div>
-                        @error('password')
-                            <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Remember Me Checkbox -->
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <div class="form-check mb-0">
-                            <input class="form-check-input" type="checkbox" id="remember_me" name="remember">
-                            <label class="form-check-label text-xs text-custom-secondary" for="remember_me">
-                                Ingat saya di perangkat ini
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn btn-submit-clean w-100 mb-2">
-                        Masuk Sekarang
+                <div class="input-pwd-wrapper">
+                    <input type="password" class="form-control form-control-clean @error('password') is-invalid @enderror" 
+                           id="password" name="password" required placeholder="Masukkan kata sandi">
+                    <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility()" title="Lihat/Sembunyikan Sandi">
+                        <i class="bi bi-eye" id="pwdEyeIcon"></i>
                     </button>
-                </form>
-
-                <!-- Social SSO Login Divider -->
-                <div class="divider-clean">
-                    <span>Atau masuk dengan</span>
                 </div>
-
-                <!-- Google Login Button -->
-                <a href="{{ route('google.redirect', ['mode' => 'login']) }}" class="btn btn-google-clean w-100 d-flex align-items-center justify-content-center gap-2">
-                    <i class="bi bi-google text-danger"></i> Google GMail
-                </a>
-
-                <!-- Register Link Footer -->
-                <div class="mt-4 pt-3 text-center text-xs text-custom-secondary border-top">
-                    Belum punya akun? 
-                    <a href="{{ route('register') }}" class="text-primary font-bold text-decoration-none ms-1">Daftar Sekarang</a>
-                </div>
-
             </div>
+
+            <!-- Remember Me Checkbox -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" id="remember_me" name="remember">
+                    <label class="form-check-label text-xs text-custom-secondary cursor-pointer" for="remember_me">
+                        Ingat saya di perangkat ini
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-submit-clean w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
+                <span>Masuk Sekarang</span>
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </form>
+
+        <!-- Social SSO Login Divider -->
+        <div class="divider-clean">
+            <span>Atau masuk dengan</span>
+        </div>
+
+        <!-- Google Login Button -->
+        <a href="{{ route('google.redirect', ['mode' => 'login']) }}" class="btn btn-google-clean w-100 d-flex align-items-center justify-content-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#EA4335" d="M12 5c1.56 0 2.97.57 4.07 1.51l3.05-3.05C17.26 1.7 14.81 1 12 1 7.42 1 3.51 3.58 1.63 7.34l3.71 2.88C6.26 7.42 8.87 5 12 5z"/>
+                <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.71 2.88c2.16-1.99 3.71-4.93 3.71-8.7z"/>
+                <path fill="#FBBC05" d="M5.34 14.78c-.24-.72-.38-1.49-.38-2.28s.14-1.56.38-2.28L1.63 7.34C.59 9.42 0 11.64 0 12.5s.59 3.08 1.63 5.16l3.71-2.88z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.71-2.88c-1.07.72-2.45 1.15-4.22 1.15-3.13 0-5.74-2.42-6.66-5.22L1.63 17.02C3.51 20.78 7.42 24 12 24z"/>
+            </svg>
+            <span class="fw-medium">Google Akun Belajar / GMail</span>
+        </a>
+
+        <!-- Register Link -->
+        <div class="mt-3 text-center text-xs text-custom-secondary">
+            Belum memiliki akun peserta? 
+            <a href="{{ route('register') }}" class="text-primary fw-bold text-decoration-none ms-1">Daftar Akun Baru</a>
         </div>
 
     </div>
+
+    <!-- Official Exambro APK Download Card -->
+    <div class="apk-download-box mt-3">
+        <div class="d-flex align-items-center justify-content-between gap-2">
+            <div class="d-flex align-items-center gap-2.5">
+                <div class="rounded-3 bg-success bg-opacity-10 text-success p-2 d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                    <i class="bi bi-android2 fs-4"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold text-custom-primary small" style="line-height: 1.2;">Exambro Mobile APK</span>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill" style="font-size: 0.65rem;">v1.0 • 11 MB</span>
+                    </div>
+                    <span class="text-custom-secondary" style="font-size: 0.72rem;">Wajib untuk ujian via smartphone Android</span>
+                </div>
+            </div>
+            <a href="{{ route('download.exambro') }}" class="btn-download-apk" title="Download Aplikasi Exambro Resmi">
+                <i class="bi bi-cloud-arrow-down-fill"></i>
+                <span>Unduh APK</span>
+            </a>
+        </div>
+
+        <!-- Panduan Singkat -->
+        <div class="mt-2 pt-2 border-top border-success-subtle d-flex align-items-center justify-content-between" style="font-size: 0.72rem;">
+            <span class="text-custom-secondary">
+                <i class="bi bi-shield-lock-fill text-success me-1"></i> Mode Kiosk Aman & Anti-Curang
+            </span>
+            <a class="text-decoration-none text-success fw-semibold" data-bs-toggle="collapse" href="#apkGuideCollapse" role="button" aria-expanded="false" aria-controls="apkGuideCollapse">
+                Panduan Pasang <i class="bi bi-chevron-down ms-0.5"></i>
+            </a>
+        </div>
+
+        <div class="collapse mt-2" id="apkGuideCollapse">
+            <div class="p-2.5 rounded-3 bg-body border small text-custom-secondary" style="font-size: 0.72rem; line-height: 1.5;">
+                <ol class="mb-0 ps-3">
+                    <li>Klik tombol <b>Unduh APK</b> dan pasang berkas di HP Android.</li>
+                    <li>Izinkan <i>"Install Unknown Apps"</i> pada pengaturan HP bila diminta.</li>
+                    <li>Buka aplikasi CBT Exambro, layar akan otomatis terkunci selama ujian.</li>
+                    <li>Login dengan akun peserta ujian yang telah terdaftar.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Copyright -->
+    <div class="text-center mt-4 text-custom-secondary" style="font-size: 0.75rem;">
+        &copy; {{ date('Y') }} SMA Negeri 5 Medan. Dilindungi Hak Cipta.
+    </div>
+
 </div>
 
 <script>

@@ -19,6 +19,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Download Exambro APK resmi
+Route::get('/download/exambro', function () {
+    $path = public_path('downloads/cbt-exambro-sman5.apk');
+    if (!file_exists($path)) {
+        abort(404, 'File APK belum tersedia di server. Silakan hubungi panitia ujian.');
+    }
+    return response()->download($path, 'cbt-exambro-sman5.apk', [
+        'Content-Type' => 'application/vnd.android.package-archive',
+    ]);
+})->name('download.exambro');
+
 // Verifikasi e-sertifikat via QR Code (regex parameter agar mendukung karakter slash '/')
 Route::get('sertifikat/verify/{nomor_sertifikat}', [LaporanController::class, 'verifySertifikat'])
     ->name('sertifikat.verify')
