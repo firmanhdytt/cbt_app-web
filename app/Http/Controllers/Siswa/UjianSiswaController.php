@@ -54,7 +54,12 @@ class UjianSiswaController extends Controller
      */
     public function confirm(Ujian $ujian)
     {
-        $userId = Auth::id();
+        $user   = Auth::user();
+        $userId = $user->id;
+
+        if ($ujian->kelas_id && $ujian->kelas_id != $user->kelas_id) {
+            return redirect()->route('siswa.ujian.index')->with('error', 'Anda tidak memiliki akses ke ujian kelas ini.');
+        }
 
         $existingHasil = HasilUjian::where('user_id', $userId)->where('ujian_id', $ujian->id)->first();
         if ($existingHasil) {
@@ -80,7 +85,12 @@ class UjianSiswaController extends Controller
      */
     public function start(Ujian $ujian)
     {
-        $userId = Auth::id();
+        $user   = Auth::user();
+        $userId = $user->id;
+
+        if ($ujian->kelas_id && $ujian->kelas_id != $user->kelas_id) {
+            return redirect()->route('siswa.ujian.index')->with('error', 'Anda tidak memiliki akses ke ujian kelas ini.');
+        }
 
         $existingHasil = HasilUjian::where('user_id', $userId)->where('ujian_id', $ujian->id)->first();
         if ($existingHasil) {
@@ -119,8 +129,10 @@ class UjianSiswaController extends Controller
             return $this->autoSubmit($ujian);
         }
 
-        // Load soal-soal ujian
-        $soals = $ujian->soals()->get();
+        // Load soal-soal ujian dengan pengacakan urutan unik per siswa (deterministic seed)
+        // Setiap siswa mendapatkan susunan soal acak berbeda, namun urutan tetap stabil saat refresh
+        $seed = ($userId * 10000) + $ujian->id;
+        $soals = $ujian->soals()->inRandomOrder($seed)->get();
 
         // Ambil jawaban yang sebelumnya sudah disimpan siswa (jika ada refresh)
         $jawabanPesertas = JawabanPeserta::where('user_id', $userId)

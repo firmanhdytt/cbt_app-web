@@ -6,15 +6,33 @@ use App\Models\HasilUjian;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Illuminate\Support\Facades\Auth;
 
 class HasilUjianExport implements FromCollection, WithHeadings, WithMapping
 {
+    protected $user;
+
+    public function __construct($user = null)
+    {
+        $this->user = $user ?? Auth::user();
+    }
+
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        return HasilUjian::with(['user.kelas', 'ujian.mapel'])->latest()->get();
+        $query = HasilUjian::with(['user.kelas', 'ujian.mapel']);
+
+        if ($this->user && $this->user->role === 'guru') {
+            $assignedKelasIds = $this->user->getAssignedKelasIds();
+            $assignedMapelIds = $this->user->getAssignedMapelIds();
+            $query->whereHas('ujian', function ($q) use ($assignedKelasIds, $assignedMapelIds) {
+                $q->whereIn('kelas_id', $assignedKelasIds)->whereIn('mapel_id', $assignedMapelIds);
+            });
+        }
+
+        return $query->latest()->get();
     }
 
     /**

@@ -767,6 +767,7 @@
         // STRICT MANDATORY FULLSCREEN LOCK PROCTORING ENGINE
         let violationCount = 0;
         let isExamStarted = false;
+        window.isExamStarted = false;
 
         const entryOverlay = document.getElementById('fullscreenEntryOverlay');
         const warningOverlay = document.getElementById('fullscreenWarningOverlay');
@@ -781,6 +782,7 @@
         btnEnterMandatoryFullscreen.addEventListener('click', () => {
             requestNativeFullscreen();
             isExamStarted = true;
+            window.isExamStarted = true;
             entryOverlay.classList.add('d-none');
         });
 
@@ -833,6 +835,7 @@
 
                 if (data.status === 'locked' || count >= 2) {
                     isExamStarted = false; // Stop further proctoring triggers
+                    window.isExamStarted = false;
                     warningOverlay.classList.add('d-none');
                     if (permanentLock) permanentLock.classList.remove('d-none');
                     showToastAlert("UJIAN TERKUNCI PERMANEN! Terdeteksi 2 kali pelanggaran.", "danger");
@@ -847,6 +850,7 @@
                 violationCount++;
                 if (violationCount >= 2) {
                     isExamStarted = false;
+                    window.isExamStarted = false;
                     warningOverlay.classList.add('d-none');
                     if (permanentLock) permanentLock.classList.remove('d-none');
                 } else {
@@ -921,9 +925,9 @@
             }
         });
 
-        // Window Focus Loss Listener
+        // Window Focus Loss Listener (Ignore if Bootstrap Modal or Offcanvas is open or document still has focus)
         window.addEventListener('blur', () => {
-            if (isExamStarted && !document.querySelector('.modal.show')) {
+            if (isExamStarted && !document.querySelector('.modal.show') && !document.querySelector('.offcanvas.show') && !document.hasFocus()) {
                 handleViolation("Fokus browser berpindah ke aplikasi luar");
             }
         });
@@ -936,13 +940,18 @@
             if (size === 'large') root.style.setProperty('--cbt-font-size', '1.175rem');
         }
 
-        // Initialize Flagged Grid Buttons
+        // Initialize Flagged Grid Buttons (both Desktop & Mobile Offcanvas)
         Object.keys(flaggedQuestions).forEach(idx => {
             if (flaggedQuestions[idx]) {
                 const mapBtn = document.getElementById(`mapBtn_${idx}`);
+                const mapBtnMobile = document.getElementById(`mapBtnMobile_${idx}`);
                 if (mapBtn) {
                     mapBtn.classList.remove('answered');
                     mapBtn.classList.add('flagged');
+                }
+                if (mapBtnMobile) {
+                    mapBtnMobile.classList.remove('answered');
+                    mapBtnMobile.classList.add('flagged');
                 }
             }
         });
@@ -1002,7 +1011,10 @@
             document.getElementById(`questionContainer_${index}`).classList.remove('d-none');
 
             document.querySelectorAll('.map-soal-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`mapBtn_${index}`).classList.add('active');
+            const mapBtn = document.getElementById(`mapBtn_${index}`);
+            if (mapBtn) mapBtn.classList.add('active');
+            const mapBtnMobile = document.getElementById(`mapBtnMobile_${index}`);
+            if (mapBtnMobile) mapBtnMobile.classList.add('active');
 
             currentQuestionIndex = index;
             document.getElementById('displaySoalNumber').textContent = index + 1;
@@ -1033,19 +1045,34 @@
         document.getElementById('btnRagu').addEventListener('click', function() {
             const isCurrentlyFlagged = flaggedQuestions[currentQuestionIndex] === true;
             const mapBtn = document.getElementById(`mapBtn_${currentQuestionIndex}`);
+            const mapBtnMobile = document.getElementById(`mapBtnMobile_${currentQuestionIndex}`);
 
             if (isCurrentlyFlagged) {
                 flaggedQuestions[currentQuestionIndex] = false;
                 this.className = 'btn btn-outline-warning btn-sm fw-semibold px-3';
-                mapBtn.classList.remove('flagged');
-                if (hasSelectedAnswer(currentQuestionIndex)) {
-                    mapBtn.classList.add('answered');
+                if (mapBtn) {
+                    mapBtn.classList.remove('flagged');
+                    if (hasSelectedAnswer(currentQuestionIndex)) {
+                        mapBtn.classList.add('answered');
+                    }
+                }
+                if (mapBtnMobile) {
+                    mapBtnMobile.classList.remove('flagged');
+                    if (hasSelectedAnswer(currentQuestionIndex)) {
+                        mapBtnMobile.classList.add('answered');
+                    }
                 }
             } else {
                 flaggedQuestions[currentQuestionIndex] = true;
                 this.className = 'btn btn-warning btn-sm fw-semibold px-3';
-                mapBtn.classList.remove('answered');
-                mapBtn.classList.add('flagged');
+                if (mapBtn) {
+                    mapBtn.classList.remove('answered');
+                    mapBtn.classList.add('flagged');
+                }
+                if (mapBtnMobile) {
+                    mapBtnMobile.classList.remove('answered');
+                    mapBtnMobile.classList.add('flagged');
+                }
             }
 
             localStorage.setItem(`ujian_flagged_${ujianId}`, JSON.stringify(flaggedQuestions));
@@ -1064,8 +1091,10 @@
             });
 
             const mapBtn = document.getElementById(`mapBtn_${qIndex}`);
+            const mapBtnMobile = document.getElementById(`mapBtnMobile_${qIndex}`);
             if (!flaggedQuestions[qIndex]) {
-                mapBtn.classList.add('answered');
+                if (mapBtn) mapBtn.classList.add('answered');
+                if (mapBtnMobile) mapBtnMobile.classList.add('answered');
             }
 
             saveAnswerAjax(soalId, optionLetter);
@@ -1079,7 +1108,9 @@
             container.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
 
             const mapBtn = document.getElementById(`mapBtn_${currentQuestionIndex}`);
-            mapBtn.classList.remove('answered');
+            const mapBtnMobile = document.getElementById(`mapBtnMobile_${currentQuestionIndex}`);
+            if (mapBtn) mapBtn.classList.remove('answered');
+            if (mapBtnMobile) mapBtnMobile.classList.remove('answered');
 
             saveAnswerAjax(soalId, null);
         }
@@ -1142,6 +1173,7 @@
         if (submitForm) {
             submitForm.addEventListener('submit', function() {
                 isExamStarted = false; // Turn off violation trigger during page submit
+                window.isExamStarted = false;
                 localStorage.removeItem(`ujian_flagged_${ujianId}`);
             });
         }
@@ -1149,6 +1181,7 @@
         // Submit Auto on Timeout
         function autoSubmitExam() {
             isExamStarted = false;
+            window.isExamStarted = false;
             localStorage.removeItem(`ujian_flagged_${ujianId}`);
             showToastAlert("Waktu ujian telah habis! Jawaban diserahkan secara otomatis...", "danger");
             setTimeout(() => {

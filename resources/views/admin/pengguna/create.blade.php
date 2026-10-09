@@ -90,6 +90,53 @@
                         </div>
                     </div>
 
+                    <!-- Fields Khusus Guru (Penempatan Kelas & Mapel Workspace) -->
+                    <div id="teacherFields" class="{{ old('role') === 'guru' ? '' : 'd-none' }} border p-3 rounded bg-light mb-3">
+                        <h6 class="border-bottom pb-2 mb-2 text-muted font-bold">Penempatan Workspace Guru (Kelas & Mata Pelajaran)</h6>
+                        <p class="text-muted text-xs mb-3">Tentukan kelas dan mata pelajaran yang menjadi hak akses workspace guru ini.</p>
+                        
+                        <div id="penempatanContainer">
+                            @php
+                                $existingPenempatans = old('penempatan', []);
+                                if (empty($existingPenempatans)) {
+                                    $existingPenempatans = [['kelas_id' => '', 'mapel_id' => '']];
+                                }
+                            @endphp
+
+                            @foreach($existingPenempatans as $index => $penempatan)
+                            <div class="row g-2 mb-2 penempatan-row align-items-center">
+                                <div class="col-md-5">
+                                    <select name="penempatan[{{ $index }}][kelas_id]" class="form-select form-select-sm">
+                                        <option value="">-- Pilih Kelas --</option>
+                                        @foreach($kelass as $kelas)
+                                            <option value="{{ $kelas->id }}" {{ ($penempatan['kelas_id'] ?? '') == $kelas->id ? 'selected' : '' }}>
+                                                {{ $kelas->nama_kelas }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <select name="penempatan[{{ $index }}][mapel_id]" class="form-select form-select-sm">
+                                        <option value="">-- Pilih Mata Pelajaran --</option>
+                                        @foreach($mapels as $mapel)
+                                            <option value="{{ $mapel->id }}" {{ ($penempatan['mapel_id'] ?? '') == $mapel->id ? 'selected' : '' }}>
+                                                {{ $mapel->nama_mapel }} ({{ $mapel->kode_mapel }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-penempatan w-100"><i class="bi bi-trash me-1"></i>Hapus</button>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        
+                        <button type="button" id="addPenempatanBtn" class="btn btn-outline-primary btn-sm mt-2">
+                            <i class="bi bi-plus-circle me-1"></i> Tambah Penempatan Kelas & Mapel
+                        </button>
+                    </div>
+
                     <!-- Nomor Telepon (Opsional) -->
                     <div class="mb-3">
                         <label for="phone" class="form-label font-medium">Nomor Telepon</label>
@@ -128,17 +175,70 @@
 @section('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('role').addEventListener('change', function() {
-            const studentFields = document.getElementById('studentFields');
-            const nisInput = document.getElementById('nis');
-            if (this.value === 'siswa') {
+        const roleSelect = document.getElementById('role');
+        const studentFields = document.getElementById('studentFields');
+        const teacherFields = document.getElementById('teacherFields');
+        const nisInput = document.getElementById('nis');
+        const container = document.getElementById('penempatanContainer');
+        const addBtn = document.getElementById('addPenempatanBtn');
+
+        function toggleFields() {
+            const role = roleSelect.value;
+            if (role === 'siswa') {
                 studentFields.classList.remove('d-none');
-                nisInput.setAttribute('required', 'required');
+                teacherFields.classList.add('d-none');
+                if (nisInput) nisInput.setAttribute('required', 'required');
+            } else if (role === 'guru') {
+                studentFields.classList.add('d-none');
+                teacherFields.classList.remove('d-none');
+                if (nisInput) nisInput.removeAttribute('required');
             } else {
                 studentFields.classList.add('d-none');
-                nisInput.removeAttribute('required');
+                teacherFields.classList.add('d-none');
+                if (nisInput) nisInput.removeAttribute('required');
             }
-        });
+        }
+
+        roleSelect.addEventListener('change', toggleFields);
+
+        if (addBtn && container) {
+            addBtn.addEventListener('click', function() {
+                const index = container.querySelectorAll('.penempatan-row').length;
+                const template = `
+                    <div class="row g-2 mb-2 penempatan-row align-items-center">
+                        <div class="col-md-5">
+                            <select name="penempatan[${index}][kelas_id]" class="form-select form-select-sm">
+                                <option value="">-- Pilih Kelas --</option>
+                                @foreach($kelass as $kelas)
+                                    <option value="{{ $kelas->id }}">{{ $kelas->nama_kelas }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <select name="penempatan[${index}][mapel_id]" class="form-select form-select-sm">
+                                <option value="">-- Pilih Mata Pelajaran --</option>
+                                @foreach($mapels as $mapel)
+                                    <option value="{{ $mapel->id }}">{{ $mapel->nama_mapel }} ({{ $mapel->kode_mapel }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm remove-penempatan w-100"><i class="bi bi-trash me-1"></i>Hapus</button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', template);
+            });
+
+            container.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-penempatan')) {
+                    const row = e.target.closest('.penempatan-row');
+                    if (container.querySelectorAll('.penempatan-row').length > 1) {
+                        row.remove();
+                    }
+                }
+            });
+        }
     });
 </script>
 @endsection

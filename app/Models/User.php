@@ -100,6 +100,66 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Relasi penempatan kelas dan mata pelajaran untuk Guru.
+     */
+    public function guruKelasMapels()
+    {
+        return $this->hasMany(GuruKelasMapel::class, 'user_id');
+    }
+
+    /**
+     * Cek apakah user (Admin / Guru) memiliki akses ke workspace (Kelas + Mapel) tertentu.
+     */
+    public function hasWorkspaceAccess($kelasId, $mapelId): bool
+    {
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        if ($this->role !== 'guru') {
+            return false;
+        }
+
+        if (!$kelasId || !$mapelId) {
+            return false;
+        }
+
+        return $this->guruKelasMapels()
+            ->where('kelas_id', $kelasId)
+            ->where('mapel_id', $mapelId)
+            ->exists();
+    }
+
+    /**
+     * Mengambil daftar ID kelas yang ditugaskan ke Guru (atau semua ID kelas jika Admin).
+     */
+    public function getAssignedKelasIds()
+    {
+        if ($this->role === 'admin') {
+            return Kelas::pluck('id');
+        }
+
+        return $this->guruKelasMapels()->pluck('kelas_id')->unique();
+    }
+
+    /**
+     * Mengambil daftar ID mapel yang ditugaskan ke Guru (atau semua ID mapel jika Admin).
+     */
+    public function getAssignedMapelIds($kelasId = null)
+    {
+        if ($this->role === 'admin') {
+            return Mapel::pluck('id');
+        }
+
+        $query = $this->guruKelasMapels();
+        if ($kelasId) {
+            $query->where('kelas_id', $kelasId);
+        }
+
+        return $query->pluck('mapel_id')->unique();
+    }
+
+    /**
      * Get the full URL for the user's avatar photo.
      */
     public function getAvatarUrlAttribute(): ?string

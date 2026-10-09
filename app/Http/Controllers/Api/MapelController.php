@@ -68,4 +68,61 @@ class MapelController extends Controller
             'data' => $mapel
         ], 200);
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $mapel = Mapel::find($id);
+
+        if (!$mapel) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mata pelajaran tidak ditemukan.'
+            ], 404);
+        }
+
+        $request->validate([
+            'nama_mapel' => 'required|string|max:255',
+            'kode_mapel' => ['required', 'string', 'max:50', \Illuminate\Validation\Rule::unique('mapels')->ignore($mapel->id)],
+        ], [
+            'nama_mapel.required' => 'Nama mata pelajaran wajib diisi.',
+            'kode_mapel.required' => 'Kode mata pelajaran wajib diisi.',
+            'kode_mapel.unique' => 'Kode mata pelajaran sudah digunakan.',
+        ]);
+
+        $mapel->update([
+            'nama_mapel' => $request->nama_mapel,
+            'kode_mapel' => strtoupper($request->kode_mapel),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Mata pelajaran berhasil diperbarui.',
+            'data' => $mapel
+        ], 200);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        $mapel = Mapel::find($id);
+
+        if (!$mapel) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mata pelajaran tidak ditemukan.'
+            ], 404);
+        }
+
+        $mapel->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Mata pelajaran berhasil dihapus.'
+        ], 200);
+    }
 }

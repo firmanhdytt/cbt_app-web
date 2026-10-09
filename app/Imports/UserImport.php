@@ -7,6 +7,7 @@ use App\Models\Kelas;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Spatie\Permission\Models\Role;
 
 class UserImport implements ToModel, WithHeadingRow
 {
@@ -17,6 +18,7 @@ class UserImport implements ToModel, WithHeadingRow
         $email = trim($row['email'] ?? '');
         $password = trim($row['password'] ?? 'password123');
         $role = strtolower(trim($row['role'] ?? 'siswa'));
+        $role = in_array($role, ['admin', 'guru', 'siswa']) ? $role : 'siswa';
         $nis = trim($row['nis'] ?? '');
         $namaKelas = trim($row['kelas'] ?? $row['nama_kelas'] ?? '');
 
@@ -37,15 +39,21 @@ class UserImport implements ToModel, WithHeadingRow
             }
         }
 
-        return new User([
-            'name'       => $name,
-            'username'   => $username,
-            'email'      => $email,
-            'password'   => Hash::make($password),
-            'role'       => in_array($role, ['admin', 'guru', 'siswa']) ? $role : 'siswa',
-            'nis'        => $nis ?: null,
-            'kelas_id'   => $kelasId,
-            'class_name' => $namaKelas ?: null,
+        $user = User::create([
+            'name'              => $name,
+            'username'          => $username,
+            'email'             => $email,
+            'password'          => Hash::make($password),
+            'role'              => $role,
+            'nis'               => $role === 'siswa' ? ($nis ?: null) : null,
+            'kelas_id'          => $role === 'siswa' ? $kelasId : null,
+            'class_name'        => $role === 'siswa' ? ($namaKelas ?: null) : null,
+            'email_verified_at' => now(),
         ]);
+
+        Role::findOrCreate($role);
+        $user->assignRole($role);
+
+        return null;
     }
 }

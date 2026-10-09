@@ -42,16 +42,26 @@ class DashboardController extends Controller
      */
     public function guru()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
+        $userId = $user->id;
         
+        $assignedKelasIds = $user->getAssignedKelasIds();
+        $assignedMapelIds = $user->getAssignedMapelIds();
+
         $soalDibuat = Soal::where('created_by', $userId)->count();
+        
         $ujianAktif = Ujian::where('status', true)
+            ->whereIn('kelas_id', $assignedKelasIds)
+            ->whereIn('mapel_id', $assignedMapelIds)
             ->where('tanggal_mulai', '<=', now())
             ->where('tanggal_selesai', '>=', now())
             ->count();
             
-        // Ambil seluruh hasil ujian siswa terbaru
+        // Ambil seluruh hasil ujian siswa terbaru pada workspace guru
         $recentResults = HasilUjian::with(['user', 'ujian.mapel'])
+            ->whereHas('ujian', function ($q) use ($assignedKelasIds, $assignedMapelIds) {
+                $q->whereIn('kelas_id', $assignedKelasIds)->whereIn('mapel_id', $assignedMapelIds);
+            })
             ->latest()
             ->take(5)
             ->get();

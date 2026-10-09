@@ -16,15 +16,30 @@ class UjianController extends Controller
      */
     public function index(Request $request)
     {
-        $mapels  = Mapel::orderBy('nama_mapel')->get();
-        $kelass  = Kelas::orderBy('nama_kelas')->get();
+        $user = Auth::user();
+
+        if ($user->role === 'guru') {
+            $assignedKelasIds = $user->getAssignedKelasIds();
+            $assignedMapelIds = $user->getAssignedMapelIds();
+
+            $kelass = Kelas::whereIn('id', $assignedKelasIds)->orderBy('nama_kelas')->get();
+            $mapels = Mapel::whereIn('id', $assignedMapelIds)->orderBy('nama_mapel')->get();
+
+            $query = Ujian::with('mapel', 'kelas')
+                ->withCount('soals')
+                ->whereIn('kelas_id', $assignedKelasIds)
+                ->whereIn('mapel_id', $assignedMapelIds)
+                ->latest();
+        } else {
+            $mapels = Mapel::orderBy('nama_mapel')->get();
+            $kelass = Kelas::orderBy('nama_kelas')->get();
+            $query  = Ujian::with('mapel', 'kelas')->withCount('soals')->latest();
+        }
 
         $mapelId = $request->get('mapel_id');
         $kelasId = $request->get('kelas_id');
         $status  = $request->get('status');
         $search  = $request->get('search');
-
-        $query = Ujian::with('mapel', 'kelas')->withCount('soals')->latest();
 
         if ($mapelId) {
             $query->where('mapel_id', $mapelId);
@@ -57,9 +72,26 @@ class UjianController extends Controller
      */
     public function create()
     {
-        $mapels = Mapel::all();
-        $kelass = Kelas::all();
-        $soals  = Soal::with('mapel', 'kelas')->latest()->get();
+        $user = Auth::user();
+
+        if ($user->role === 'guru') {
+            $assignedKelasIds = $user->getAssignedKelasIds();
+            $assignedMapelIds = $user->getAssignedMapelIds();
+
+            $kelass = Kelas::whereIn('id', $assignedKelasIds)->orderBy('nama_kelas')->get();
+            $mapels = Mapel::whereIn('id', $assignedMapelIds)->orderBy('nama_mapel')->get();
+
+            $soals  = Soal::with('mapel', 'kelas')
+                ->whereIn('kelas_id', $assignedKelasIds)
+                ->whereIn('mapel_id', $assignedMapelIds)
+                ->latest()
+                ->get();
+        } else {
+            $mapels = Mapel::orderBy('nama_mapel')->get();
+            $kelass = Kelas::orderBy('nama_kelas')->get();
+            $soals  = Soal::with('mapel', 'kelas')->latest()->get();
+        }
+
         return view('ujian.create', compact('mapels', 'kelass', 'soals'));
     }
 
@@ -68,6 +100,8 @@ class UjianController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
             'mapel_id'        => 'required|exists:mapels,id',
             'kelas_id'        => 'required|exists:kelas,id',
@@ -89,6 +123,24 @@ class UjianController extends Controller
             'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
             'soals.required'           => 'Minimal pilih 1 soal untuk ujian ini.',
         ]);
+
+        if (!$user->hasWorkspaceAccess($request->kelas_id, $request->mapel_id)) {
+            abort(403, 'Akses ditolak: Anda tidak memiliki akses workspace untuk kelas & mapel ini.');
+        }
+
+        // Validasi seluruh soal yang dipilih harus sesuai dengan workspace dan kelas/mapel ujian
+        $invalidSoalsCount = Soal::whereIn('id', $request->soals)
+            ->where(function ($q) use ($request) {
+                $q->where('kelas_id', '!=', $request->kelas_id)
+                  ->orWhere('mapel_id', '!=', $request->mapel_id);
+            })
+            ->count();
+
+        if ($invalidSoalsCount > 0) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['soals' => 'Beberapa soal yang dipilih tidak sesuai dengan Kelas atau Mata Pelajaran ujian ini.']);
+        }
 
         $ujian = Ujian::create([
             'mapel_id'        => $request->mapel_id,
@@ -103,8 +155,7 @@ class UjianController extends Controller
 
         $ujian->soals()->sync($request->soals);
 
-        $role = Auth::user()->role;
-        return redirect()->route($role . '.ujian.index')->with('success', 'Ujian berhasil dibuat dan dijadwalkan.');
+        return redirect()->route($user->role . '.ujian.index')->with('success', 'Ujian berhasil dibuat dan dijadwalkan.');
     }
 
     /**
@@ -112,6 +163,11 @@ class UjianController extends Controller
      */
     public function show(Ujian $ujian)
     {
+        $user = Auth::user();
+        if (!$user->hasWorkspaceAccess($ujian->kelas_id, $ujian->mapel_id)) {
+            abort(403, 'Akses ditolak: Ujian ini berada di luar workspace Anda.');
+        }
+
         $ujian->load('mapel', 'kelas', 'soals');
         return view('ujian.show', compact('ujian'));
     }
@@ -121,10 +177,31 @@ class UjianController extends Controller
      */
     public function edit(Ujian $ujian)
     {
+        $user = Auth::user();
+        if (!$user->hasWorkspaceAccess($ujian->kelas_id, $ujian->mapel_id)) {
+            abort(403, 'Akses ditolak: Ujian ini berada di luar workspace Anda.');
+        }
+
         $ujian->load('soals');
-        $mapels = Mapel::all();
-        $kelass = Kelas::all();
-        $soals  = Soal::with('mapel', 'kelas')->latest()->get();
+
+        if ($user->role === 'guru') {
+            $assignedKelasIds = $user->getAssignedKelasIds();
+            $assignedMapelIds = $user->getAssignedMapelIds();
+
+            $kelass = Kelas::whereIn('id', $assignedKelasIds)->orderBy('nama_kelas')->get();
+            $mapels = Mapel::whereIn('id', $assignedMapelIds)->orderBy('nama_mapel')->get();
+
+            $soals  = Soal::with('mapel', 'kelas')
+                ->whereIn('kelas_id', $assignedKelasIds)
+                ->whereIn('mapel_id', $assignedMapelIds)
+                ->latest()
+                ->get();
+        } else {
+            $mapels = Mapel::orderBy('nama_mapel')->get();
+            $kelass = Kelas::orderBy('nama_kelas')->get();
+            $soals  = Soal::with('mapel', 'kelas')->latest()->get();
+        }
+
         return view('ujian.edit', compact('ujian', 'mapels', 'kelass', 'soals'));
     }
 
@@ -133,6 +210,11 @@ class UjianController extends Controller
      */
     public function update(Request $request, Ujian $ujian)
     {
+        $user = Auth::user();
+        if (!$user->hasWorkspaceAccess($ujian->kelas_id, $ujian->mapel_id)) {
+            abort(403, 'Akses ditolak: Ujian ini berada di luar workspace Anda.');
+        }
+
         $request->validate([
             'mapel_id'        => 'required|exists:mapels,id',
             'kelas_id'        => 'required|exists:kelas,id',
@@ -155,6 +237,24 @@ class UjianController extends Controller
             'soals.required'           => 'Minimal pilih 1 soal untuk ujian ini.',
         ]);
 
+        if (!$user->hasWorkspaceAccess($request->kelas_id, $request->mapel_id)) {
+            abort(403, 'Akses ditolak: Anda tidak dapat memindahkan ujian ke kelas & mapel di luar workspace Anda.');
+        }
+
+        // Validasi seluruh soal yang dipilih harus sesuai dengan kelas & mapel baru
+        $invalidSoalsCount = Soal::whereIn('id', $request->soals)
+            ->where(function ($q) use ($request) {
+                $q->where('kelas_id', '!=', $request->kelas_id)
+                  ->orWhere('mapel_id', '!=', $request->mapel_id);
+            })
+            ->count();
+
+        if ($invalidSoalsCount > 0) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['soals' => 'Beberapa soal yang dipilih tidak sesuai dengan Kelas atau Mata Pelajaran ujian ini.']);
+        }
+
         $ujian->update([
             'mapel_id'        => $request->mapel_id,
             'kelas_id'        => $request->kelas_id,
@@ -168,8 +268,7 @@ class UjianController extends Controller
 
         $ujian->soals()->sync($request->soals);
 
-        $role = Auth::user()->role;
-        return redirect()->route($role . '.ujian.index')->with('success', 'Ujian berhasil diperbarui.');
+        return redirect()->route($user->role . '.ujian.index')->with('success', 'Ujian berhasil diperbarui.');
     }
 
     /**
@@ -177,9 +276,13 @@ class UjianController extends Controller
      */
     public function destroy(Ujian $ujian)
     {
+        $user = Auth::user();
+        if (!$user->hasWorkspaceAccess($ujian->kelas_id, $ujian->mapel_id)) {
+            abort(403, 'Akses ditolak: Ujian ini berada di luar workspace Anda.');
+        }
+
         $ujian->delete();
-        $role = Auth::user()->role;
-        return redirect()->route($role . '.ujian.index')->with('success', 'Ujian berhasil dihapus.');
+        return redirect()->route($user->role . '.ujian.index')->with('success', 'Ujian berhasil dihapus.');
     }
 
     /**
@@ -187,9 +290,13 @@ class UjianController extends Controller
      */
     public function toggleStatus(Ujian $ujian)
     {
+        $user = Auth::user();
+        if (!$user->hasWorkspaceAccess($ujian->kelas_id, $ujian->mapel_id)) {
+            abort(403, 'Akses ditolak: Ujian ini berada di luar workspace Anda.');
+        }
+
         $ujian->update(['status' => !$ujian->status]);
-        $role = Auth::user()->role;
         $statusText = $ujian->status ? 'diaktifkan' : 'dinonaktifkan';
-        return redirect()->route($role . '.ujian.index')->with('success', "Ujian berhasil {$statusText}.");
+        return redirect()->route($user->role . '.ujian.index')->with('success', "Ujian berhasil {$statusText}.");
     }
 }

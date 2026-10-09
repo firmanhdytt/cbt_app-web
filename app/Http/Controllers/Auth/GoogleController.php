@@ -147,8 +147,6 @@ class GoogleController extends Controller
         if ($user) {
             $user->update([
                 'google_id' => null,
-                'email' => null,
-                'email_verified_at' => null,
             ]);
             return redirect()->route('profile.edit')->with('status', 'google-unlinked');
         }

@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 
+use App\Models\GuruKelasMapel;
+use App\Models\Mapel;
+
 class AdminPenggunaController extends Controller
 {
     /**
@@ -21,7 +24,7 @@ class AdminPenggunaController extends Controller
         $kelasId = $request->get('kelas_id', '');
         $search  = $request->get('search', '');
 
-        $query = User::with('kelas')->latest();
+        $query = User::with(['kelas', 'guruKelasMapels.kelas', 'guruKelasMapels.mapel'])->latest();
 
         if ($role && in_array($role, ['admin', 'guru', 'siswa'])) {
             $query->where('role', $role);
@@ -50,8 +53,9 @@ class AdminPenggunaController extends Controller
         ];
 
         $kelass = Kelas::orderBy('nama_kelas')->get();
+        $mapels = Mapel::orderBy('nama_mapel')->get();
 
-        return view('admin.pengguna.index', compact('users', 'counts', 'role', 'kelasId', 'search', 'kelass'));
+        return view('admin.pengguna.index', compact('users', 'counts', 'role', 'kelasId', 'search', 'kelass', 'mapels'));
     }
 
     /**
@@ -60,7 +64,8 @@ class AdminPenggunaController extends Controller
     public function create()
     {
         $kelass = Kelas::orderBy('nama_kelas')->get();
-        return view('admin.pengguna.create', compact('kelass'));
+        $mapels = Mapel::orderBy('nama_mapel')->get();
+        return view('admin.pengguna.create', compact('kelass', 'mapels'));
     }
 
     /**
@@ -69,15 +74,18 @@ class AdminPenggunaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'       => 'required|string|max:255',
-            'username'   => 'required|string|max:255|unique:users',
-            'email'      => 'required|string|email|max:255|unique:users',
-            'password'   => 'required|string|min:8|confirmed',
-            'role'       => 'required|in:admin,guru,siswa',
-            'nis'        => 'nullable|required_if:role,siswa|string|max:50|unique:users',
-            'kelas_id'   => 'nullable|exists:kelas,id',
-            'class_name' => 'nullable|string|max:100',
-            'phone'      => 'nullable|string|max:20',
+            'name'         => 'required|string|max:255',
+            'username'     => 'required|string|max:255|unique:users',
+            'email'        => 'required|string|email|max:255|unique:users',
+            'password'     => 'required|string|min:8|confirmed',
+            'role'         => 'required|in:admin,guru,siswa',
+            'nis'          => 'nullable|required_if:role,siswa|string|max:50|unique:users',
+            'kelas_id'     => 'nullable|exists:kelas,id',
+            'class_name'   => 'nullable|string|max:100',
+            'phone'        => 'nullable|string|max:20',
+            'penempatan'   => 'nullable|array',
+            'penempatan.*.kelas_id' => 'nullable|exists:kelas,id',
+            'penempatan.*.mapel_id' => 'nullable|exists:mapels,id',
         ], [
             'name.required'      => 'Nama lengkap wajib diisi.',
             'username.unique'    => 'Username sudah terpakai.',
@@ -109,7 +117,21 @@ class AdminPenggunaController extends Controller
             'email_verified_at' => now(),
         ]);
 
+        Role::findOrCreate($request->role);
         $user->assignRole($request->role);
+
+        // Jika user adalah Guru, simpan penempatan kelas + mapel
+        if ($request->role === 'guru' && is_array($request->penempatan)) {
+            foreach ($request->penempatan as $p) {
+                if (!empty($p['kelas_id']) && !empty($p['mapel_id'])) {
+                    GuruKelasMapel::firstOrCreate([
+                        'user_id'  => $user->id,
+                        'kelas_id' => $p['kelas_id'],
+                        'mapel_id' => $p['mapel_id'],
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.pengguna.index')->with('success', 'Pengguna berhasil dibuat.');
     }
@@ -119,8 +141,10 @@ class AdminPenggunaController extends Controller
      */
     public function edit(User $pengguna)
     {
+        $pengguna->load('guruKelasMapels.kelas', 'guruKelasMapels.mapel');
         $kelass = Kelas::orderBy('nama_kelas')->get();
-        return view('admin.pengguna.edit', ['user' => $pengguna, 'kelass' => $kelass]);
+        $mapels = Mapel::orderBy('nama_mapel')->get();
+        return view('admin.pengguna.edit', ['user' => $pengguna, 'kelass' => $kelass, 'mapels' => $mapels]);
     }
 
     /**
@@ -129,15 +153,18 @@ class AdminPenggunaController extends Controller
     public function update(Request $request, User $pengguna)
     {
         $request->validate([
-            'name'       => 'required|string|max:255',
-            'username'   => ['required', 'string', 'max:255', Rule::unique('users')->ignore($pengguna->id)],
-            'email'      => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($pengguna->id)],
-            'password'   => 'nullable|string|min:8|confirmed',
-            'role'       => 'required|in:admin,guru,siswa',
-            'nis'        => ['nullable', 'required_if:role,siswa', 'string', 'max:50', Rule::unique('users')->ignore($pengguna->id)],
-            'kelas_id'   => 'nullable|exists:kelas,id',
-            'class_name' => 'nullable|string|max:100',
-            'phone'      => 'nullable|string|max:20',
+            'name'         => 'required|string|max:255',
+            'username'     => ['required', 'string', 'max:255', Rule::unique('users')->ignore($pengguna->id)],
+            'email'        => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($pengguna->id)],
+            'password'     => 'nullable|string|min:8|confirmed',
+            'role'         => 'required|in:admin,guru,siswa',
+            'nis'          => ['nullable', 'required_if:role,siswa', 'string', 'max:50', Rule::unique('users')->ignore($pengguna->id)],
+            'kelas_id'     => 'nullable|exists:kelas,id',
+            'class_name'   => 'nullable|string|max:100',
+            'phone'        => 'nullable|string|max:20',
+            'penempatan'   => 'nullable|array',
+            'penempatan.*.kelas_id' => 'nullable|exists:kelas,id',
+            'penempatan.*.mapel_id' => 'nullable|exists:mapels,id',
         ], [
             'name.required'      => 'Nama lengkap wajib diisi.',
             'username.unique'    => 'Username sudah terpakai.',
@@ -172,7 +199,24 @@ class AdminPenggunaController extends Controller
         }
 
         $pengguna->update($data);
+        Role::findOrCreate($request->role);
         $pengguna->syncRoles([$request->role]);
+
+        // Simpan / perbarui penempatan kelas + mapel jika role adalah Guru
+        if ($request->role === 'guru') {
+            GuruKelasMapel::where('user_id', $pengguna->id)->delete();
+            if (is_array($request->penempatan)) {
+                foreach ($request->penempatan as $p) {
+                    if (!empty($p['kelas_id']) && !empty($p['mapel_id'])) {
+                        GuruKelasMapel::firstOrCreate([
+                            'user_id'  => $pengguna->id,
+                            'kelas_id' => $p['kelas_id'],
+                            'mapel_id' => $p['mapel_id'],
+                        ]);
+                    }
+                }
+            }
+        }
 
         return redirect()->route('admin.pengguna.index')->with('success', 'Data pengguna berhasil diperbarui.');
     }

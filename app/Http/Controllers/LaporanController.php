@@ -24,15 +24,30 @@ class LaporanController extends Controller
      */
     public function index(Request $request)
     {
-        $kelass = \App\Models\Kelas::orderBy('nama_kelas')->get();
-        $ujians = Ujian::orderBy('judul')->get();
+        $user = Auth::user();
+
+        if ($user->role === 'guru') {
+            $assignedKelasIds = $user->getAssignedKelasIds();
+            $assignedMapelIds = $user->getAssignedMapelIds();
+
+            $kelass = \App\Models\Kelas::whereIn('id', $assignedKelasIds)->orderBy('nama_kelas')->get();
+            $ujians = Ujian::whereIn('kelas_id', $assignedKelasIds)->whereIn('mapel_id', $assignedMapelIds)->orderBy('judul')->get();
+
+            $query = HasilUjian::with(['user.kelas', 'ujian.mapel', 'ujian.kelas'])
+                ->whereHas('ujian', function ($q) use ($assignedKelasIds, $assignedMapelIds) {
+                    $q->whereIn('kelas_id', $assignedKelasIds)->whereIn('mapel_id', $assignedMapelIds);
+                })
+                ->latest();
+        } else {
+            $kelass = \App\Models\Kelas::orderBy('nama_kelas')->get();
+            $ujians = Ujian::orderBy('judul')->get();
+            $query  = HasilUjian::with(['user.kelas', 'ujian.mapel', 'ujian.kelas'])->latest();
+        }
 
         $kelasId = $request->get('kelas_id');
         $ujianId = $request->get('ujian_id');
         $status  = $request->get('status');
         $search  = $request->get('search');
-
-        $query = HasilUjian::with(['user.kelas', 'ujian.mapel', 'ujian.kelas'])->latest();
 
         if ($kelasId) {
             $query->whereHas('user', function ($q) use ($kelasId) {
@@ -65,13 +80,19 @@ class LaporanController extends Controller
 
         $hasilUjians = $query->paginate(15)->withQueryString();
 
+        $statsQuery = $user->role === 'guru'
+            ? HasilUjian::whereHas('ujian', function ($q) use ($user) {
+                $q->whereIn('kelas_id', $user->getAssignedKelasIds())->whereIn('mapel_id', $user->getAssignedMapelIds());
+              })
+            : HasilUjian::query();
+
         // Summary Stats
         $stats = [
-            'total'    => HasilUjian::count(),
-            'lulus'    => HasilUjian::where('nilai', '>=', 70)->where(function($q){ $q->whereNull('status_pengerjaan')->orWhere('status_pengerjaan', '!=', 'terkunci'); })->count(),
-            'remidi'   => HasilUjian::where('nilai', '<', 70)->where(function($q){ $q->whereNull('status_pengerjaan')->orWhere('status_pengerjaan', '!=', 'terkunci'); })->count(),
-            'terkunci' => HasilUjian::where('status_pengerjaan', 'terkunci')->count(),
-            'rata_rata'=> round(HasilUjian::avg('nilai') ?? 0, 1),
+            'total'    => (clone $statsQuery)->count(),
+            'lulus'    => (clone $statsQuery)->where('nilai', '>=', 70)->where(function($q){ $q->whereNull('status_pengerjaan')->orWhere('status_pengerjaan', '!=', 'terkunci'); })->count(),
+            'remidi'   => (clone $statsQuery)->where('nilai', '<', 70)->where(function($q){ $q->whereNull('status_pengerjaan')->orWhere('status_pengerjaan', '!=', 'terkunci'); })->count(),
+            'terkunci' => (clone $statsQuery)->where('status_pengerjaan', 'terkunci')->count(),
+            'rata_rata'=> round((clone $statsQuery)->avg('nilai') ?? 0, 1),
         ];
 
         return view('laporan.index', compact(
@@ -84,17 +105,32 @@ class LaporanController extends Controller
      */
     public function laporanSiswa(Request $request)
     {
-        $kelass  = \App\Models\Kelas::orderBy('nama_kelas')->get();
+        $user = Auth::user();
+
+        if ($user->role === 'guru') {
+            $assignedKelasIds = $user->getAssignedKelasIds();
+            $kelass = \App\Models\Kelas::whereIn('id', $assignedKelasIds)->orderBy('nama_kelas')->get();
+            $query  = User::with('kelas')
+                ->whereIn('kelas_id', $assignedKelasIds)
+                ->withCount(['hasilUjians as total_lulus' => function ($q) {
+                    $q->where('nilai', '>=', 70)->where(function($sq){ $sq->whereNull('status_pengerjaan')->orWhere('status_pengerjaan', '!=', 'terkunci'); });
+                }])
+                ->withCount('hasilUjians')
+                ->where('role', 'siswa')
+                ->latest();
+        } else {
+            $kelass = \App\Models\Kelas::orderBy('nama_kelas')->get();
+            $query  = User::with('kelas')
+                ->withCount(['hasilUjians as total_lulus' => function ($q) {
+                    $q->where('nilai', '>=', 70)->where(function($sq){ $sq->whereNull('status_pengerjaan')->orWhere('status_pengerjaan', '!=', 'terkunci'); });
+                }])
+                ->withCount('hasilUjians')
+                ->where('role', 'siswa')
+                ->latest();
+        }
+
         $kelasId = $request->get('kelas_id');
         $search  = $request->get('search');
-
-        $query = User::with('kelas')
-            ->withCount(['hasilUjians as total_lulus' => function ($q) {
-                $q->where('nilai', '>=', 70)->where(function($sq){ $sq->whereNull('status_pengerjaan')->orWhere('status_pengerjaan', '!=', 'terkunci'); });
-            }])
-            ->withCount('hasilUjians')
-            ->where('role', 'siswa')
-            ->latest();
 
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
@@ -123,12 +159,25 @@ class LaporanController extends Controller
      */
     public function detailSiswa(User $siswa)
     {
+        $user = Auth::user();
+        if ($user->role === 'guru' && !in_array($siswa->kelas_id, $user->getAssignedKelasIds()->toArray())) {
+            abort(403, 'Akses ditolak: Siswa ini berada di luar kelas workspace Anda.');
+        }
+
         $siswa->load('kelas');
 
-        $hasilUjians = HasilUjian::with('ujian.mapel', 'ujian.kelas')
-            ->where('user_id', $siswa->id)
-            ->latest()
-            ->get();
+        $hasilQuery = HasilUjian::with('ujian.mapel', 'ujian.kelas')
+            ->where('user_id', $siswa->id);
+
+        if ($user->role === 'guru') {
+            $assignedKelasIds = $user->getAssignedKelasIds();
+            $assignedMapelIds = $user->getAssignedMapelIds();
+            $hasilQuery->whereHas('ujian', function ($q) use ($assignedKelasIds, $assignedMapelIds) {
+                $q->whereIn('kelas_id', $assignedKelasIds)->whereIn('mapel_id', $assignedMapelIds);
+            });
+        }
+
+        $hasilUjians = $hasilQuery->latest()->get();
 
         $avgScore = round($hasilUjians->avg('nilai') ?? 0, 1);
         $totalLulus = $hasilUjians->where('nilai', '>=', 70)->where('status_pengerjaan', '!=', 'terkunci')->count();
@@ -153,7 +202,7 @@ class LaporanController extends Controller
      */
     public function exportHasilUjian()
     {
-        return Excel::download(new HasilUjianExport, 'hasil-ujian.xlsx');
+        return Excel::download(new HasilUjianExport(Auth::user()), 'hasil-ujian.xlsx');
     }
 
     /**
@@ -161,7 +210,7 @@ class LaporanController extends Controller
      */
     public function exportSoal()
     {
-        return Excel::download(new SoalExport, 'bank-soal.xlsx');
+        return Excel::download(new SoalExport(Auth::user()), 'bank-soal.xlsx');
     }
 
     /**
@@ -287,6 +336,11 @@ class LaporanController extends Controller
      */
     public function bukaKunci(HasilUjian $hasil)
     {
+        $user = Auth::user();
+        if (!$user->hasWorkspaceAccess($hasil->ujian->kelas_id, $hasil->ujian->mapel_id)) {
+            abort(403, 'Akses ditolak: Anda tidak memiliki akses workspace untuk membuka kunci ujian ini.');
+        }
+
         $ujianId = $hasil->ujian_id;
         $userId  = $hasil->user_id;
 
