@@ -27,18 +27,27 @@
     </script>
 
     <style>
+        html {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            height: auto !important;
+        }
+
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
-            background-color: var(--bg-body, #f8fafc);
-            color: var(--text-primary, #1e293b);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow-x: hidden;
-            padding: 2rem 1rem;
+            font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            background-color: var(--bg-body, #f8fafc) !important;
+            color: var(--text-primary, #1e293b) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            position: relative !important;
+            padding: 3.5rem 1.25rem 5rem !important;
+            margin: 0 !important;
         }
 
         /* Subtle ambient glow in background */
@@ -64,6 +73,7 @@
         .login-wrapper {
             width: 100%;
             max-width: 460px;
+            margin: auto;
             position: relative;
             z-index: 1;
         }
