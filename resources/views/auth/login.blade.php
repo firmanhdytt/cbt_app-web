@@ -426,7 +426,7 @@
                         <span class="fw-bold text-custom-primary small" style="line-height: 1.2;">Exambro Mobile APK</span>
                         <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill" style="font-size: 0.65rem;">v1.0 • 11 MB</span>
                     </div>
-                    <span class="text-custom-secondary" style="font-size: 0.72rem;">Wajib untuk ujian via smartphone Android</span>
+                    <span class="text-custom-secondary" style="font-size: 0.72rem;">Aplikasi Pengunci Layar (Kiosk Mode HP Android)</span>
                 </div>
             </div>
             <a href="{{ route('download.exambro') }}" class="btn-download-apk" title="Download Aplikasi Exambro Resmi">
@@ -435,22 +435,26 @@
             </a>
         </div>
 
-        <!-- Panduan Singkat Pemasangan APK -->
+        <!-- Panduan & Info Ujian Web -->
         <details class="mt-2.5 pt-2 border-top border-success-subtle apk-guide-details">
             <summary class="d-flex align-items-center justify-content-between text-success fw-semibold cursor-pointer user-select-none" style="font-size: 0.74rem;">
                 <span class="text-custom-secondary">
-                    <i class="bi bi-shield-lock-fill text-success me-1"></i> Mode Kiosk Aman & Anti-Curang
+                    <i class="bi bi-info-circle-fill text-primary me-1"></i> Ujian via Web atau APK?
                 </span>
                 <span class="d-inline-flex align-items-center gap-1">
-                    Panduan Pasang <i class="bi bi-chevron-down guide-chevron"></i>
+                    Bantuan & Panduan <i class="bi bi-chevron-down guide-chevron"></i>
                 </span>
             </summary>
-            <div class="mt-2 p-2.5 rounded-3 bg-body border text-custom-secondary" style="font-size: 0.74rem; line-height: 1.55;">
+            <div class="mt-2 p-2.5 rounded-3 bg-body border text-custom-secondary" style="font-size: 0.74rem; line-height: 1.6;">
+                <div class="mb-2 p-2 rounded-2 bg-primary bg-opacity-10 text-primary border border-primary-subtle fw-semibold" style="font-size: 0.73rem;">
+                    <i class="bi bi-check2-circle me-1"></i> <b>Bisa Langsung Ujian via Browser Web!</b><br>
+                    <span class="fw-normal text-custom-secondary">Peserta ujian di Laptop, Komputer, atau HP <b>dapat langsung masuk di halaman web ini</b> tanpa harus menginstal APK. Sistem Proctoring (anti pindah tab & layar penuh) tetap aktif di browser.</span>
+                </div>
+                <div class="fw-bold text-custom-primary mb-1">Panduan Penggunaan Aplikasi APK:</div>
                 <ol class="mb-0 ps-3">
-                    <li>Klik tombol <b>Unduh APK</b> dan pasang (install) di smartphone Android.</li>
-                    <li>Izinkan <i>"Install Unknown Apps" / Sumber Tidak Dikenal</i> pada pengaturan bila diminta.</li>
-                    <li>Buka aplikasi <b>CBT Exambro</b>, layar otomatis terkunci selama ujian.</li>
-                    <li>Masukkan email / username dan kata sandi peserta untuk mulai ujian.</li>
+                    <li><b>Izin Unduh:</b> Jika browser HP memunculkan peringatan <i>"File mungkin berbahaya"</i>, pilih <b>"Tetap Unduh / Download Anyway"</b>.</li>
+                    <li><b>Izin Pasang:</b> Jika muncul <i>"Ponsel tidak diizinkan memasang aplikasi tidak dikenal"</i>, buka <b>Setelan &rarr; Izinkan dari sumber ini</b>.</li>
+                    <li><b>Jika Muncul Permintaan URL Server:</b> Masukkan alamat URL: <code class="text-primary bg-light px-1 py-0.5 rounded">https://cbt-smanli.solusibersamaa.com</code> dengan Password Pengawas: <code class="text-danger bg-light px-1 py-0.5 rounded">cbt123</code>.</li>
                 </ol>
             </div>
         </details>

@@ -27,6 +27,10 @@ Route::get('/download/exambro', function () {
     }
     return response()->download($path, 'cbt-exambro-sman5.apk', [
         'Content-Type' => 'application/vnd.android.package-archive',
+        'Content-Disposition' => 'attachment; filename="cbt-exambro-sman5.apk"',
+        'Accept-Ranges' => 'bytes',
+        'Pragma' => 'public',
+        'Cache-Control' => 'public, must-revalidate, max-age=0',
     ]);
 })->name('download.exambro');
 
