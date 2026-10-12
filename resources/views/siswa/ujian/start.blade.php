@@ -575,11 +575,6 @@
                         <button type="button" class="btn btn-sm btn-outline-primary font-semibold py-1.5 px-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavSoal">
                             <i class="bi bi-grid-3x3-gap-fill me-1"></i> Peta Soal
                         </button>
-                        <!-- Button Selesai Header (Akses Cepat Kapan Saja) -->
-                        <button type="button" class="btn btn-sm btn-success fw-bold py-1.5 px-3 shadow-sm d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" id="btnHeaderFinish" title="Kumpulkan Ujian">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Selesai</span>
-                        </button>
                     </div>
                 </div>
 
@@ -649,9 +644,9 @@
                 @endforeach
             </div>
 
-            <!-- Submit Button Desktop Sidebar -->
+            <!-- Submit Button Desktop Sidebar (Muncul Otomatis Saat Semua Soal Terisi) -->
             <div class="mt-3">
-                <button type="button" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" id="btnSidebarFinish">
+                <button type="button" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 d-none" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" id="btnSidebarFinish">
                     <i class="bi bi-check-circle-fill fs-5"></i>
                     <span>Kumpulkan Ujian</span>
                 </button>
@@ -702,9 +697,9 @@
                 @endforeach
             </div>
 
-            <!-- Submit Button Mobile Offcanvas -->
+            <!-- Submit Button Mobile Offcanvas (Muncul Otomatis Saat Semua Soal Terisi) -->
             <div class="my-2">
-                <button type="button" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" data-bs-dismiss="offcanvas" id="btnOffcanvasFinish">
+                <button type="button" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 d-none" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" data-bs-dismiss="offcanvas" id="btnOffcanvasFinish">
                     <i class="bi bi-check-circle-fill fs-5"></i>
                     <span>Kumpulkan Ujian Sekarang</span>
                 </button>
@@ -1060,14 +1055,7 @@
 
             document.getElementById('btnPrev').disabled = (index === 0);
 
-            if (index === totalQuestions - 1) {
-                document.getElementById('btnNext').classList.add('d-none');
-                document.getElementById('btnFinish').classList.remove('d-none');
-            } else {
-                document.getElementById('btnNext').classList.remove('d-none');
-                document.getElementById('btnFinish').classList.add('d-none');
-            }
-
+            // Periksa status kelengkapan semua soal untuk menampilkan tombol selesai
             checkAllAnswered();
 
             const isFlagged = flaggedQuestions[index] === true;
@@ -1143,23 +1131,49 @@
             saveAnswerAjax(soalId, optionLetter);
         }
 
-        // Helper to check if all questions have been answered and highlight finish buttons
+        // Helper to check if all questions have been answered and show finish buttons
         function checkAllAnswered() {
             let answered = 0;
             for (let i = 0; i < totalQuestions; i++) {
                 if (hasSelectedAnswer(i)) answered++;
             }
             const allDone = (answered === totalQuestions);
-            const btnHeaderFinish = document.getElementById('btnHeaderFinish');
+            const isLastQuestion = (currentQuestionIndex === totalQuestions - 1);
+
+            const btnNext = document.getElementById('btnNext');
+            const btnFinish = document.getElementById('btnFinish');
             const btnOffcanvasFinish = document.getElementById('btnOffcanvasFinish');
             const btnSidebarFinish = document.getElementById('btnSidebarFinish');
-            const btnFinish = document.getElementById('btnFinish');
 
-            [btnHeaderFinish, btnOffcanvasFinish, btnSidebarFinish, btnFinish].forEach(btn => {
+            // Tombol Selesai di Navigasi Bawah (muncul jika semua soal sudah terisi, atau berada di soal terakhir)
+            if (btnFinish && btnNext) {
+                if (allDone || isLastQuestion) {
+                    btnFinish.classList.remove('d-none');
+                    if (isLastQuestion) {
+                        btnNext.classList.add('d-none');
+                    } else {
+                        btnNext.classList.remove('d-none');
+                    }
+                } else {
+                    btnFinish.classList.add('d-none');
+                    btnNext.classList.remove('d-none');
+                }
+
+                if (allDone) {
+                    btnFinish.classList.add('btn-pulse-finish');
+                } else {
+                    btnFinish.classList.remove('btn-pulse-finish');
+                }
+            }
+
+            // Tombol Selesai di Drawer Peta Soal Mobile & Sidebar Desktop: hanya muncul jika semua soal terisi
+            [btnOffcanvasFinish, btnSidebarFinish].forEach(btn => {
                 if (btn) {
                     if (allDone) {
+                        btn.classList.remove('d-none');
                         btn.classList.add('btn-pulse-finish');
                     } else {
+                        btn.classList.add('d-none');
                         btn.classList.remove('btn-pulse-finish');
                     }
                 }
