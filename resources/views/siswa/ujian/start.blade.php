@@ -317,16 +317,17 @@
                 color: #94a3b8 !important;
             }
             .cbt-app-container {
-                height: calc(100vh - 54px - 60px);
+                height: calc(100vh - 54px);
                 flex-direction: column;
                 overflow: hidden;
+                position: relative;
             }
             html, body {
                 overflow: hidden;
                 background-color: #f8fafc;
             }
             .cbt-main-content {
-                padding: 0.65rem 0.65rem 1rem 0.65rem;
+                padding: 0.75rem 0.75rem 5.5rem 0.75rem !important;
                 flex: 1;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
@@ -382,13 +383,14 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 60px;
+                min-height: 58px;
+                height: auto;
                 background-color: #ffffff;
                 border-top: 1.5px solid #e2e8f0;
-                padding: 0.5rem 0.75rem;
+                padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
                 margin: 0;
-                z-index: 1010;
-                box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+                z-index: 1040;
+                box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -396,15 +398,22 @@
             }
             .cbt-question-footer .btn {
                 flex: 1;
-                padding: 0.5rem 0.35rem !important;
-                font-size: 0.78rem !important;
+                padding: 0.55rem 0.35rem !important;
+                font-size: 0.8rem !important;
                 font-weight: 700 !important;
                 white-space: nowrap;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                height: 42px;
+                height: 44px;
                 border-radius: 8px;
+            }
+            .cbt-question-footer #btnFinish {
+                background-color: #10b981 !important;
+                border-color: #10b981 !important;
+                color: #ffffff !important;
+                font-weight: 800 !important;
+                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
             }
             .timer-badge {
                 font-size: 0.88rem;
@@ -414,6 +423,15 @@
                 color: #ffffff;
                 border: 1px solid rgba(255, 255, 255, 0.2);
             }
+        }
+
+        @keyframes pulse-finish-btn {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .btn-pulse-finish {
+            animation: pulse-finish-btn 1.6s infinite ease-in-out;
         }
     </style>
 </head>
@@ -557,6 +575,11 @@
                         <button type="button" class="btn btn-sm btn-outline-primary font-semibold py-1.5 px-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavSoal">
                             <i class="bi bi-grid-3x3-gap-fill me-1"></i> Peta Soal
                         </button>
+                        <!-- Button Selesai Header (Akses Cepat Kapan Saja) -->
+                        <button type="button" class="btn btn-sm btn-success fw-bold py-1.5 px-3 shadow-sm d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" id="btnHeaderFinish" title="Kumpulkan Ujian">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Selesai</span>
+                        </button>
                     </div>
                 </div>
 
@@ -626,8 +649,16 @@
                 @endforeach
             </div>
 
+            <!-- Submit Button Desktop Sidebar -->
+            <div class="mt-3">
+                <button type="button" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" id="btnSidebarFinish">
+                    <i class="bi bi-check-circle-fill fs-5"></i>
+                    <span>Kumpulkan Ujian</span>
+                </button>
+            </div>
+
             <!-- Legend Info -->
-            <div class="border-top pt-3 mt-auto text-xs text-muted">
+            <div class="border-top pt-3 mt-3 text-xs text-muted">
                 <div class="d-flex align-items-center mb-2">
                     <span class="d-inline-block bg-success rounded-circle me-2" style="width:12px; height:12px;"></span>
                     <span>Sudah Dijawab</span>
@@ -658,8 +689,8 @@
             </h6>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
-            <div class="map-grid" id="mapContainerMobile">
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="map-grid mb-3" id="mapContainerMobile">
                 @foreach ($soals as $index => $soal)
                     @php
                         $answered = isset($jawabanPesertas[$soal->id]);
@@ -671,7 +702,15 @@
                 @endforeach
             </div>
 
-            <div class="border-top pt-3 mt-4 text-xs text-muted">
+            <!-- Submit Button Mobile Offcanvas -->
+            <div class="my-2">
+                <button type="button" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" data-bs-dismiss="offcanvas" id="btnOffcanvasFinish">
+                    <i class="bi bi-check-circle-fill fs-5"></i>
+                    <span>Kumpulkan Ujian Sekarang</span>
+                </button>
+            </div>
+
+            <div class="border-top pt-3 mt-auto text-xs text-muted">
                 <div class="d-flex align-items-center mb-2">
                     <span class="d-inline-block bg-success rounded-circle me-2" style="width:12px; height:12px;"></span>
                     <span>Sudah Dijawab</span>
@@ -1029,6 +1068,8 @@
                 document.getElementById('btnFinish').classList.add('d-none');
             }
 
+            checkAllAnswered();
+
             const isFlagged = flaggedQuestions[index] === true;
             const btnRagu = document.getElementById('btnRagu');
             if (isFlagged) {
@@ -1093,11 +1134,36 @@
             const mapBtn = document.getElementById(`mapBtn_${qIndex}`);
             const mapBtnMobile = document.getElementById(`mapBtnMobile_${qIndex}`);
             if (!flaggedQuestions[qIndex]) {
-                if (mapBtn) mapBtn.classList.add('answered');
-                if (mapBtnMobile) mapBtnMobile.classList.add('answered');
+                 if (mapBtn) mapBtn.classList.add('answered');
+                 if (mapBtnMobile) mapBtnMobile.classList.add('answered');
             }
 
+            checkAllAnswered();
+
             saveAnswerAjax(soalId, optionLetter);
+        }
+
+        // Helper to check if all questions have been answered and highlight finish buttons
+        function checkAllAnswered() {
+            let answered = 0;
+            for (let i = 0; i < totalQuestions; i++) {
+                if (hasSelectedAnswer(i)) answered++;
+            }
+            const allDone = (answered === totalQuestions);
+            const btnHeaderFinish = document.getElementById('btnHeaderFinish');
+            const btnOffcanvasFinish = document.getElementById('btnOffcanvasFinish');
+            const btnSidebarFinish = document.getElementById('btnSidebarFinish');
+            const btnFinish = document.getElementById('btnFinish');
+
+            [btnHeaderFinish, btnOffcanvasFinish, btnSidebarFinish, btnFinish].forEach(btn => {
+                if (btn) {
+                    if (allDone) {
+                        btn.classList.add('btn-pulse-finish');
+                    } else {
+                        btn.classList.remove('btn-pulse-finish');
+                    }
+                }
+            });
         }
 
         // Clear Answer
@@ -1111,6 +1177,8 @@
             const mapBtnMobile = document.getElementById(`mapBtnMobile_${currentQuestionIndex}`);
             if (mapBtn) mapBtn.classList.remove('answered');
             if (mapBtnMobile) mapBtnMobile.classList.remove('answered');
+
+            checkAllAnswered();
 
             saveAnswerAjax(soalId, null);
         }
